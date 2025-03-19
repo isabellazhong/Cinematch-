@@ -1,5 +1,4 @@
 import csv
-import dataclasses
 
 class MovieData:
     """Data object representing movie data
@@ -11,6 +10,7 @@ class MovieData:
         - director: the director of this film
         - movie_id: the unique movie id identifier
     """
+
     title: str
     genre: str
     runtime: int
@@ -50,8 +50,8 @@ class MovieData:
         identifier to the MovieData object of the specific movie.
         """
         movies = {}
-        with open("data/title.basics.tsv") as f:
-            reader = csv.DictReader(f, delimiter="\t")
+        with open("data/title.basics.csv") as f:
+            reader = csv.DictReader(f, delimiter=",", fieldnames = ["tconst","titleType","primaryTitle","originalTitle","isAdult","startYear","endYear","runtimeMinutes","genres"])
             for row in reader:
                 movie_id = row["tconst"]
                 title = row["primaryTitle"]
@@ -64,12 +64,12 @@ class MovieData:
     def load_directors_cast(cls, movies: dict[str: "MovieData"]) -> None:
         """
         class method to load in the directors and cast information of the movie. Mutates the dictionary mapping the
-        unqique movie id identifier to the MovieData object.
+        unqique movie id identifier to the MovieData object to add in the remianing information.
         """
-        with open("data/title.principals.tsv") as f:
-            reader = csv.DictReader(f, delimiter="\t")
+        with open("data/title.principals.csv") as f:
+            reader = csv.DictReader(f, delimiter=",", fieldnames = ["tconst","ordering","nconst","category","job","characters"])
             for row in reader:
-                if row["tconst"] in movies:
+                if row["nconst"] in movies:
                     if row["category"] == "director":
                         movies[row["tconst"]].director.append(row["category"])
                     if row["category"] == "actor" or row["category"] == "actress":
