@@ -34,6 +34,11 @@ class MovieDecisionTree:
 
     def build_decision_tree(self):
         movies_dict = MovieData.load_movie_basics()
-
         features = []
         predicted_movies = []
+        for movie in movies_dict:
+            genre = movies_dict[movie].genre_runtime[0]
+            runtime = movies_dict[movie].genre_runtime[1]
+            rating = movies_dict[movie].overview_rating[1]
+
+            #convert the categorical genres to values
