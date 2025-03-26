@@ -1,6 +1,8 @@
 from __future__ import annotations
 import csv
 from typing import Any
+from MovieData import MovieData
+import networkx as nx
 
 
 class _Vertex:
@@ -51,14 +53,10 @@ class Graph:
     def add_vertex(self, item: str, kind: str) -> None:
         """Add a vertex with the given item and kind to this graph.
 
-        The new vertex is not adjacent to any other vertices.
-        Do nothing if the given item is already in this graph.
-
         Preconditions:
             - kind in {'actor', 'movie'}
         """
-        if item not in self._vertices:
-            self._vertices[item] = _Vertex(item, kind)
+        self._vertices[item] = _Vertex(item, kind)
 
     def add_edge(self, item1: str, item2: str) -> None:
         """Add an edge between the two vertices with the given items in this graph.
@@ -91,6 +89,35 @@ class Graph:
         else:
             raise ValueError
 
+    def get_vertices(self, kind: str) -> set:
+        """Return a set of all vertices' items of the argumented kind"""
+
+        return {self._vertices[x].item for x in self._vertices if self._vertices[x].kind == kind}
+
+    # TODO: Delete this later
+    def to_networkx(self, max_vertices: int = 5000) -> nx.Graph:
+        """Convert this graph into a networkx Graph.
+
+        max_vertices specifies the maximum number of vertices that can appear in the graph.
+        (This is necessary to limit the visualization output for large graphs.)
+
+        Note that this method is provided for you, and you shouldn't change it.
+        """
+        graph_nx = nx.Graph()
+        for v in self._vertices.values():
+            graph_nx.add_node(v.item, kind=v.kind)
+
+            for u in v.neighbours:
+                if graph_nx.number_of_nodes() < max_vertices:
+                    graph_nx.add_node(u.item, kind=u.kind)
+
+                if u.item in graph_nx.nodes:
+                    graph_nx.add_edge(v.item, u.item)
+
+            if graph_nx.number_of_nodes() >= max_vertices:
+                break
+
+        return graph_nx
 
 def load_movie_actor_graph(movie_file: str) -> Graph:
     """Return a graph corresponding to the given datasets.
@@ -104,22 +131,37 @@ def load_movie_actor_graph(movie_file: str) -> Graph:
 
     Preconditions:
         - movie_file is the path to a CSV file corresponding to the movie data
+
+    >>> g = load_movie_actor_graph("movie_data_small.csv")
+    >>> len(g.get_vertices(kind='movie'))
+    2
+    >>> len(g.get_vertices(kind='actor'))
+    7
+    >>> cast = g.get_neighbours('The Godfather')
+    >>> len(cast)
+    4
+    >>> 'RUPAUL' in cast
+    True
     """
+    # my_graph = load_movie_actor_graph("movie_data_small.csv")
 
     graph = Graph()
 
-    with open(movie_file) as f:
-        reader = csv.reader(f, delimiter="\t", quotechar='"')
-        for row in reader:
+    moviedata = MovieData.load_movie_basics(movie_file)
 
-            print(row)
+    for movie in moviedata:
+        graph.add_vertex(movie, 'movie')
 
-    # FINISH WHEN I CAN SEE THE TSV FILE
+        for actor in moviedata[movie].cast_director[0]:
+            if actor not in graph.get_vertices(kind='actor'):
+                graph.add_vertex(actor, 'actor')
+
+            graph.add_edge(movie, actor)
 
     return graph
 
 
-if __name__ == '__main__':
+#if __name__ == '__main__':
     # You can uncomment the following lines for code checking/debugging purposes.
     # However, we recommend commenting out these lines when working with the large
     # datasets, as checking representation invariants and preconditions greatly
@@ -127,16 +169,16 @@ if __name__ == '__main__':
     # import python_ta.contracts
     # python_ta.contracts.check_all_contracts()
 
-    import doctest
-
-    doctest.testmod()
-
-    import python_ta
-
-    python_ta.check_all(config={
-        'max-line-length': 120,
-        'disable': ['E1136'],
-        'extra-imports': ['csv', 'networkx'],
-        'allowed-io': ['load_review_graph'],
-        'max-nested-blocks': 4
-    })
+    # import doctest
+    #
+    # doctest.testmod()
+    #
+    # import python_ta
+    #
+    # python_ta.check_all(config={
+    #     'max-line-length': 120,
+    #     'disable': ['E1136'],
+    #     'extra-imports': ['csv', 'networkx'],
+    #     'allowed-io': ['load_movie_actor_graph'],
+    #     'max-nested-blocks': 4
+    # })
