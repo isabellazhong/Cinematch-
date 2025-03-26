@@ -1,18 +1,20 @@
+"""A class for movie data."""
 import csv
+
 
 class MovieData:
     """Data object representing movie data
 
     Instance Attributes:
-        - poseter_title
-        - genre_runtime
-        - cast_director
-        - overview_rating
+        - poster_title: a tuple contaning an address for the movie poster image and the movie title
+        - genre_runtime: a tuple containing the movie genre and runtime
+        - cast_director: a tuple containing a list of the movie cast members and the movie director
+        - overview_rating: a tuple containing the movie overview and the movie rating
     """
 
     poster_title: tuple[str, str]
     genre_runtime: tuple[str, int]
-    cast_director: tuple[list[str],str]
+    cast_director: tuple[list[str], str]
     overview_rating: tuple[str, float]
 
     def __init__(self, poster_title, genre_runtime, cast_director, overview_rating):
@@ -32,13 +34,13 @@ class MovieData:
                 f"Overview: {self.overview_rating[0]}")
 
     @classmethod
-    def load_movie_basics(cls) -> dict:
+    def load_movie_basics(cls, filename: str) -> dict:
         """
         class method to load in the basic information of the movie. Returns a dictionary mapping the unique movie id
         identifier to the MovieData object of the specific movie.
         """
         movies = {}
-        with open("imdb_top_1000.csv") as f:
+        with open(filename) as f:
             reader = csv.DictReader(f, delimiter=",")
             for row in reader:
                 poster_title = (row["Poster_Link"], row["Series_Title"])
