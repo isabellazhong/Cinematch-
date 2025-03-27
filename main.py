@@ -125,7 +125,7 @@ class CineMatch:
         tk.Label(length_frame, text="Runtime:", 
                  font=self.button_font, fg="white", bg="#002138").pack(side=tk.LEFT, padx=10)
         
-        length_options = ["0-60 Minutes", "60-90 Minutes", "90-120 Minutes", "120-180 Minutes", "180-240 Minutes", "240+ Minutes"]
+        length_options = ["0-60 minutes", "60-90 minutes", "90-120 minutes", "120-180 minutes", "180-240 minutes", "240+ minutes"]
         self.length_var = tk.StringVar(value=length_options[0])
         length_dropdown = tk.OptionMenu(length_frame, self.length_var, *length_options)
         length_dropdown.config(font=self.button_font, bg=self.colour_blue, fg="white",
@@ -134,24 +134,32 @@ class CineMatch:
         length_dropdown["menu"].config(font=self.button_font, bg=self.colour_light, fg=self.colour_dark)
         length_dropdown.pack(side=tk.LEFT)
 
-        # Genre dropdown
+        # Genre multiple-selection Listbox
         genre_frame = tk.Frame(self.recommendation_frame, bg="#002138")
         genre_frame.pack(pady=10)
         
-        tk.Label(genre_frame, text="Genre:", 
+        tk.Label(genre_frame, text="Select Genre(s):", 
                  font=self.button_font, fg="white", bg="#002138").pack(side=tk.LEFT, padx=10)
-        
-        genre_options = ["Action", "Adventure", "Animation", "Biography", "Comedy", "Crime", 
-                         "Drama", "Family", "Fantasy", "Film-Noir", "History", "Horror", 
-                         "Music", "Musical", "Mystery", "Romance", "Sci-Fi", "Support", 
+
+        genre_options = ["Action", "Adventure", "Animation", "Biography", "Comedy", "Crime",
+                         "Drama", "Family", "Fantasy", "Film-Noir", "History", "Horror",
+                         "Music", "Musical", "Mystery", "Romance", "Sci-Fi", "Support",
                          "Thriller", "War", "Western"]
-        self.genre_var = tk.StringVar(value=genre_options[0])
-        genre_dropdown = tk.OptionMenu(genre_frame, self.genre_var, *genre_options)
-        genre_dropdown.config(font=self.button_font, bg=self.colour_blue, fg="white",
-                              activebackground=self.colour_dark, activeforeground="white",
-                              highlightthickness=0)
-        genre_dropdown["menu"].config(font=self.button_font, bg=self.colour_light, fg=self.colour_dark)
-        genre_dropdown.pack(side=tk.LEFT)
+        
+        self.genre_listbox = tk.Listbox(genre_frame, selectmode="multiple",
+                                        font=self.button_font, bg=self.colour_light,
+                                        fg=self.colour_dark, height=10)
+        
+        for genre in genre_options:
+            self.genre_listbox.insert(tk.END, genre)
+        
+        scrollbar = tk.Scrollbar(genre_frame)
+        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        
+        self.genre_listbox.config(yscrollcommand=scrollbar.set)
+        scrollbar.config(command=self.genre_listbox.yview)
+        
+        self.genre_listbox.pack(side=tk.LEFT)
 
         # Submit button
         submit_btn = tk.Button(self.recommendation_frame, text="Submit",
@@ -161,22 +169,26 @@ class CineMatch:
                                borderwidth=0, highlightthickness=0)
         submit_btn.pack(pady=20)
 
-    def process_preferences(self):
+    def process_preferences(self, genre: str, length: str):
+        """
+        Store the given preferences into a tuple
+        """
         length_map = {
-            "0-60": "very-short",
-            "60-90": "short",
-            "90-120": "mid",
-            "120-180": "mid-long",
-            "180-240": "long",
-            "240+": "very-long"
+            "0-60 minutes": "very-short",
+            "60-90 minutes": "short",
+            "90-120 minutes": "mid",
+            "120-180 minutes": "mid-long",
+            "180-240 minutes": "long",
+            "240+ minutes": "very-long"
         }
         
         length = length_map[self.length_var.get()]
-        genre = self.genre_var.get()
+        # Get selected genres from Listbox
+        selected_indices = self.genre_listbox.curselection()
+        genres = [self.genre_listbox.get(i) for i in selected_indices]
         
         preferences = (length, genre)
-        print(f"User preferences: {preferences}")
-        # Here you can add your logic to use these preferences for recommendations
+        # TODO: Pass tuple to tree method for filtering.
 
     def show_movie_list(self, movies, title):
         """
