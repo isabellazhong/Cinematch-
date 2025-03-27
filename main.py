@@ -8,8 +8,6 @@ from MovieActorGraph import _Vertex, Graph
 class CineMatch:
     """
     Class for the full graphic user interface for CineMatch.
-
-    - Style: ttk Style attributes for GUI
     """
 
     def __init__(self, root):
@@ -99,13 +97,14 @@ class CineMatch:
         """
         actor_name = self.actor_entry.get().strip()  # gets the inputted actor's name
         if actor_name:
-            movies = self.graph.(actor_name)
+            movies = self.graph.load_movie_actor_graph("movie_data_small.csv")
             if movies:
                 self.show_movie_list(movies, f"Movies featuring {actor_name}")
             else:
-                # messagebox.showinfo("Not Found", f"No movies found for {actor_name}")
+                messagebox.showinfo("Not Found", f"No movies found for {actor_name}")
+
         else:
-           # messagebox.showwarning("Input Error", "Please enter an actor's name")
+           messagebox.showwarning("Input Error", "Please enter an actor's name")
 
     def show_tree_recommendations(self):
         """
@@ -118,28 +117,37 @@ class CineMatch:
         """
         Shows the list of movie recommendations in a window
         """
-        # Create new window for recommendations
         result_window = tk.Toplevel(self.root)
         result_window.title(title)
         result_window.geometry("600x400")
 
-        # Style components
         style = ttk.Style(result_window)
         style.configure("Treeview", font=("Arial", 12), rowheight=25)
         style.configure("Treeview.Heading", font=("Arial", 14, "bold"))
 
-        # Create treeview
-        tree = ttk.Treeview(result_window, columns=("Year", "Rating"), show="headings")
-        tree.heading("#0", text="Movie Title")
+        tree = ttk.Treeview(result_window, columns=("Title", "Year", "Rating"), show="headings")
+        tree.heading("Title", text="Movie Title")
         tree.heading("Year", text="Year")
         tree.heading("Rating", text="Rating")
 
-        # Add movies
         for movie in movies:
-            tree.insert("", tk.END, text=movie.title,
-                        values=(movie.year, movie.rating))
+            if isinstance(movie, dict):
+                tree.insert("", tk.END, values=(movie.get('title', ''), 
+                                                movie.get('year', ''), 
+                                                movie.get('rating', '')))
+            elif isinstance(movie, str):
+                tree.insert("", tk.END, values=(movie, '', ''))
+            else:
+                tree.insert("", tk.END, values=(getattr(movie, 'title', ''),
+                                                getattr(movie, 'year', ''),
+                                                getattr(movie, 'rating', '')))
 
         tree.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
+
+        scrollbar = ttk.Scrollbar(result_window, orient="vertical", command=tree.yview)
+        tree.configure(yscrollcommand=scrollbar.set)
+        scrollbar.pack(side="right", fill="y")
+
 
 
 # Configure styles
@@ -152,6 +160,26 @@ style.configure('Secondary.TButton', font=('Arial', 14),
                 foreground='white', background='#FF6B6B')
 
 if __name__ == "__main__":
+# You can uncomment the following lines for code checking/debugging purposes.
+    # However, we recommend commenting out these lines when working with the large
+    # datasets, as checking representation invariants and preconditions greatly
+    # increases the running time of the functions/methods.
+    # import python_ta.contracts
+    # python_ta.contracts.check_all_contracts()
+
+    # import doctest
+    #
+    # doctest.testmod()
+    #
+    # import python_ta
+    #
+    # python_ta.check_all(config={
+    #     'max-line-length': 120,
+    #     'disable': ['E1136'],
+    #     'extra-imports': ['csv', 'networkx'],
+    #     'allowed-io': ['load_movie_actor_graph'],
+    #     'max-nested-blocks': 4
+    # })
     root1 = tk.Tk()
     app = CineMatch(root1)
     root1.mainloop()
