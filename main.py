@@ -2,7 +2,8 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 import tkinter.font as tkfont
 from tree import Movie
-from MovieActorGraph import _Vertex, Graph
+from MovieActorGraph import _Vertex, Graph, load_movie_actor_graph
+from MovieData import MovieData
 
 
 class CineMatch:
@@ -16,10 +17,9 @@ class CineMatch:
         self.root.geometry("800x600")
         self.root.configure(bg="#002138")
 
-        # Initialize components
+        # Initialize recommendation functionality components
         self.tree = Movie()
-        graph = Graph()
-        self.graph = graph.load_movie_data("imdb_top_100.csv")
+        self.graph = load_movie_actor_graph("imdb_top_1000.csv")
 
         # Custom fonts
         self.title_font = tkfont.Font(family="Helvetica", size=24, weight="bold")
@@ -111,8 +111,9 @@ class CineMatch:
         """
         Shows recommendations by using the tree.
         """
-        # recommendations = self.tree.get_recommendations()
-        # self.show_movie_list(recommendations, "Personalized Recommendations")
+
+        # TODO: Add screen for asking questions: "What is the runtime range you're looking to be within?"
+        # "What genre movie would you like to watch?" use tree to filter through.
 
     def show_movie_list(self, movies, title):
         """
@@ -127,6 +128,7 @@ class CineMatch:
         style.configure("Treeview", font=("Arial", 12), rowheight=25)
         style.configure("Treeview.Heading", font=("Arial", 14, "bold"))
 
+        # Tree showcase of movie recommendations
         tree = ttk.Treeview(result_window, columns=("Title", "Year", "Rating"), show="headings")
         tree.heading("Title", text="Movie Title")
         tree.heading("Year", text="Year")
