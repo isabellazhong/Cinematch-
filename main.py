@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
 import tkinter.font as tkfont
-from tree import Movie
+# from tree import Movie
 from MovieActorGraph import _Vertex, Graph, load_movie_actor_graph
 from MovieData import MovieData
 
@@ -18,8 +18,8 @@ class CineMatch:
         self.root.configure(bg="#002138")
 
         # Initialize recommendation functionality components
-        self.tree = Movie()
-        self.graph = load_movie_actor_graph("imdb_top_1000.csv")
+        # self.tree = Movie()
+        # self.graph = load_movie_actor_graph("imdb_top_1000.csv")
 
         # Custom fonts
         self.title_font = tkfont.Font(family="Helvetica", size=24, weight="bold")
@@ -111,9 +111,72 @@ class CineMatch:
         """
         Shows recommendations by using the tree.
         """
+        self.actor_frame.pack_forget()
+        self.recommendation_frame.pack(fill=tk.BOTH, expand=True, padx=50, pady=50)
 
-        # TODO: Add screen for asking questions: "What is the runtime range you're looking to be within?"
-        # "What genre movie would you like to watch?" use tree to filter through.
+        tk.Label(self.recommendation_frame, 
+                 text="Please select your preferences:",
+                 font=("Helvetica", 16), fg="white", bg="#002138").pack(pady=20)
+
+        # Runtime dropdown
+        length_frame = tk.Frame(self.recommendation_frame, bg="#002138")
+        length_frame.pack(pady=10)
+        
+        tk.Label(length_frame, text="Runtime:", 
+                 font=self.button_font, fg="white", bg="#002138").pack(side=tk.LEFT, padx=10)
+        
+        length_options = ["0-60 Minutes", "60-90 Minutes", "90-120 Minutes", "120-180 Minutes", "180-240 Minutes", "240+ Minutes"]
+        self.length_var = tk.StringVar(value=length_options[0])
+        length_dropdown = tk.OptionMenu(length_frame, self.length_var, *length_options)
+        length_dropdown.config(font=self.button_font, bg=self.colour_blue, fg="white",
+                               activebackground=self.colour_dark, activeforeground="white",
+                               highlightthickness=0)
+        length_dropdown["menu"].config(font=self.button_font, bg=self.colour_light, fg=self.colour_dark)
+        length_dropdown.pack(side=tk.LEFT)
+
+        # Genre dropdown
+        genre_frame = tk.Frame(self.recommendation_frame, bg="#002138")
+        genre_frame.pack(pady=10)
+        
+        tk.Label(genre_frame, text="Genre:", 
+                 font=self.button_font, fg="white", bg="#002138").pack(side=tk.LEFT, padx=10)
+        
+        genre_options = ["Action", "Adventure", "Animation", "Biography", "Comedy", "Crime", 
+                         "Drama", "Family", "Fantasy", "Film-Noir", "History", "Horror", 
+                         "Music", "Musical", "Mystery", "Romance", "Sci-Fi", "Support", 
+                         "Thriller", "War", "Western"]
+        self.genre_var = tk.StringVar(value=genre_options[0])
+        genre_dropdown = tk.OptionMenu(genre_frame, self.genre_var, *genre_options)
+        genre_dropdown.config(font=self.button_font, bg=self.colour_blue, fg="white",
+                              activebackground=self.colour_dark, activeforeground="white",
+                              highlightthickness=0)
+        genre_dropdown["menu"].config(font=self.button_font, bg=self.colour_light, fg=self.colour_dark)
+        genre_dropdown.pack(side=tk.LEFT)
+
+        # Submit button
+        submit_btn = tk.Button(self.recommendation_frame, text="Submit",
+                               command=self.process_preferences,
+                               font=self.button_font, fg="white", bg=self.colour_blue,
+                               activebackground="#3E8E41", activeforeground="white",
+                               borderwidth=0, highlightthickness=0)
+        submit_btn.pack(pady=20)
+
+    def process_preferences(self):
+        length_map = {
+            "0-60": "very-short",
+            "60-90": "short",
+            "90-120": "mid",
+            "120-180": "mid-long",
+            "180-240": "long",
+            "240+": "very-long"
+        }
+        
+        length = length_map[self.length_var.get()]
+        genre = self.genre_var.get()
+        
+        preferences = (length, genre)
+        print(f"User preferences: {preferences}")
+        # Here you can add your logic to use these preferences for recommendations
 
     def show_movie_list(self, movies, title):
         """
