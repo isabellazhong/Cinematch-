@@ -18,7 +18,8 @@ class CineMatch:
 
         # Initialize components
         self.tree = Movie()
-        self.graph = Graph()
+        graph = Graph()
+        self.graph = graph.load_movie_data("imdb_top_100.csv")
 
         # Custom fonts
         self.title_font = tkfont.Font(family="Helvetica", size=24, weight="bold")
@@ -76,7 +77,7 @@ class CineMatch:
         btn_frame.pack(pady=20)
 
         # Enter the inputted actor, goes to the graph functionality
-        enter_btn = tk.Button(btn_frame, text="Enter Actor",
+        enter_btn = tk.Button(btn_frame, text="Enter Actor (Case Sensitive)",
                                command=self.handle_actor_search,
                                font=self.button_font, fg="white", bg=self.colour_blue,
                                activebackground="#3E8E41", activeforeground="white",
@@ -95,15 +96,15 @@ class CineMatch:
         """
         Recommend movies based on the actor the user inputted.
         """
-        actor_name = self.actor_entry.get().strip()  # gets the inputted actor's name
+        actor_name = self.actor_entry.get()  # gets the inputted actor's name
         if actor_name:
-            movies = self.graph.load_movie_actor_graph("movie_data_small.csv")
+            movies = self.graph.get_neighbours(actor_name)
             if movies:
                 self.show_movie_list(movies, f"Movies featuring {actor_name}")
             else:
                 messagebox.showinfo("Not Found", f"No movies found for {actor_name}")
 
-        else:
+        else:  # no actor name inputted
            messagebox.showwarning("Input Error", "Please enter an actor's name")
 
     def show_tree_recommendations(self):
@@ -117,6 +118,7 @@ class CineMatch:
         """
         Shows the list of movie recommendations in a window
         """
+        # Create result window
         result_window = tk.Toplevel(self.root)
         result_window.title(title)
         result_window.geometry("600x400")
