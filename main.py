@@ -3,6 +3,7 @@ from tkinter import ttk, messagebox
 import tkinter.font as tkfont
 from tree import Movie
 from MovieActorGraph import _Vertex, Graph
+from tree import MovieDecisionTree, Movie
 
 
 class CineMatch:
@@ -158,6 +159,12 @@ style.configure('Accent.TButton', font=('Arial', 14),
                 foreground='white', background='#4ECDC4')
 style.configure('Secondary.TButton', font=('Arial', 14),
                 foreground='white', background='#FF6B6B')
+
+
+def build_decision_tree():
+    tree = MovieDecisionTree()
+    
+
 
 if __name__ == "__main__":
 # You can uncomment the following lines for code checking/debugging purposes.
