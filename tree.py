@@ -3,6 +3,8 @@ import pandas as pd
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.model_selection import train_test_split
 from sklearn import tree
+from sklearn.preprocessing import OneHotEncoder
+import numpy as np
 from MovieData import MovieData
 
 class Movie:
@@ -32,13 +34,52 @@ class MovieDecisionTree:
         self.tree = None
 
 
-    def build_decision_tree(self):
-        movies_dict = MovieData.load_movie_basics()
-        features = []
-        predicted_movies = []
-        for movie in movies_dict:
-            genre = movies_dict[movie].genre_runtime[0]
-            runtime = movies_dict[movie].genre_runtime[1]
-            rating = movies_dict[movie].overview_rating[1]
+    #uses one hot encoder to convert to numerical data
+    def transform_movie_data(self, file:str):
+        movies = MovieData.load_movie_basics(file)
+        data = []
+        MOVIE_OBJECT_INDEX = 1
 
-            #convert the categorical genres to values
+        for movie in movies.items():
+            movie_data = movie[MOVIE_OBJECT_INDEX]
+            poster_link, series_title = movie_data.poster_title
+            genres, runtime = movie_data.genre_runtime
+            overview, imdb_rating = movie_data.overview_rating
+
+            data.append({
+                "title": series_title,
+                "poster": poster_link,
+                "genre": genres if genres else np.nan,
+                "runtime": runtime,
+                "overview": overview,
+                "imdb_rating": float(imdb_rating) if imdb_rating else np.nan 
+            })
+
+
+        # #adjusts data type 
+        df = pd.DataFrame(data)
+        df['runtime'] =  df['runtime'].str.extract('(\d+)').astype(float)
+        df['genre'] = df['genre'].str.split(', ')
+        df_explode_genre = df.explode('genre')
+        df_onehot = pd.get_dummies(df_explode_genre, columns=['genre'], dtype=int)
+        df_final = df_onehot.groupby('title', as_index=False).sum()
+
+      
+        runtime_intervals = [0, 60, 90, 120, 180, 240, np.inf]
+        runtime_labels = [1,2,3,4,5,6]
+        df_final['runtime_bin'] = pd.cut(df_final['runtime'], bins=runtime_intervals, labels=runtime_labels)
+
+        return df_final 
+
+
+y = MovieDecisionTree()
+print(y.transform_movie_data('movie_data_small.csv'))
+
+
+
+
+
+
+
+    
+

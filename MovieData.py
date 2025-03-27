@@ -49,3 +49,8 @@ class MovieData:
                 overview_rating = (row["Overview"], row["IMDB_Rating"])
                 movies[row["Series_Title"]] = MovieData(poster_title, genre_runtime, cast_director, overview_rating)
         return movies
+    
+
+  
+
+
