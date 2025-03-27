@@ -127,7 +127,7 @@ def load_movie_actor_graph(movie_file: str) -> Graph:
     Edges represent an actor being in a movie.
 
     The vertices of the 'actor' kind should have the 'actor's FULL NAME' as its item.
-    The vertices of the 'movie' kind representing each reviewed book should have the movie TITLE as its item.
+    The vertices of the 'movie' kind representing each movie should have the movie TITLE as its item.
 
     Preconditions:
         - movie_file is the path to a CSV file corresponding to the movie data
@@ -170,11 +170,11 @@ def load_movie_actor_graph(movie_file: str) -> Graph:
     # python_ta.contracts.check_all_contracts()
 
     # import doctest
-    #
+    
     # doctest.testmod()
-    #
+    
     # import python_ta
-    #
+    
     # python_ta.check_all(config={
     #     'max-line-length': 120,
     #     'disable': ['E1136'],
