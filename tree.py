@@ -61,25 +61,31 @@ class MovieDecisionTree:
         df['runtime'] =  df['runtime'].str.extract(r'(\d+)').astype(float)
         df['genre'] = df['genre'].str.split(', ')
         df_explode_genre = df.explode('genre')
-        df_onehot = pd.get_dummies(df_explode_genre, columns=['genre'], dtype=int)
-        df_final = df_onehot.groupby('title', as_index=False).sum()
+        df_onehot_genre = pd.get_dummies(df_explode_genre, columns=['genre'], dtype=int)
+        df2 = df_onehot_genre.groupby('title', as_index=False).sum()
 
       
         runtime_intervals = [0, 60, 90, 120, 180, 240, np.inf]
-        runtime_labels = [1,2,3,4,5,6]
-        df_final['runtime_bin'] = pd.cut(df_final['runtime'], bins=runtime_intervals, labels=runtime_labels)
+        runtime_labels = ['very-short', 'short', 'mid', 'mid-long', 'long', 'very-long']
+        df2['runtime_bin'] = pd.cut(df2['runtime'], bins=runtime_intervals, labels=runtime_labels)
         
+        df_explode_runtime = df2.explode('runtime_bin')
+        df_onehot_runtime = pd.get_dummies(df_explode_runtime, columns=['runtime_bin'], dtype=int)
+        df_final = df_onehot_runtime.groupby('title', as_index=False).sum()
         return df_final
 
     #creates a csv of a pathway for each movie that the tree can pass through
     def create_decision_csv(self, movie_file:str, decision_file:str):
         df = self.transform_movie_data(movie_file)
         genre_columns = [col for col in df.columns if col.startswith('genre_')]
-        df = df[['title', 'runtime', 'imdb_rating'] + genre_columns]
+        runtime_columns = [col for col in df.columns if col.startswith('runtime_bin_')]
+        df = df[['title'] + runtime_columns + genre_columns]
         df.to_csv(decision_file, encoding='utf-8', index=False)
         
 
+    # def get_user_input(question: list, input:list):
 
+        
 
 y = MovieDecisionTree()
 # print(y.transform_movie_data('movie_data_small.csv'))
