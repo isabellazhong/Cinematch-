@@ -4,8 +4,6 @@ import tkinter.font as tkfont
 # from tree import Movie
 from MovieActorGraph import _Vertex, Graph, load_movie_actor_graph
 from MovieData import MovieData
-from tree import MovieDecisionTree, Movie
-import csv
 
 
 class CineMatch:
@@ -184,13 +182,35 @@ class CineMatch:
             "180-240 minutes": "long",
             "240+ minutes": "very-long"
         }
+        genre_map = {
+            "Action": "genre_Action",
+            "Adventure": "genre_Animation",
+            "Biography": "genre_Comedy",
+            "Crime": "genre_Crime",
+            "Drama": "genre_Drama", 
+            "Family": "genre_Family", 
+            "Fantasy": "genre_Fantasy", 
+            "Film-Noir": "genre_Film-Noir", 
+            "History": "genre_History", 
+            "Horror": "genre_Horror",
+            "Music": "genre_Music", 
+            "Musical": "genre_Musical", 
+            "Mystery": "genre_Mystery", 
+            "Romance": "genre_Romance", 
+            "Sci-Fi": "genre_Sci-Fi", 
+            "Support": "genre_Support",
+            "Thriller": "genre_Thriller", 
+            "War": "genre_War", 
+            "Western": "genre_Western"
+        }
         
         length = length_map[self.length_var.get()]
         # Get selected genres from Listbox
         selected_indices = self.genre_listbox.curselection()
-        genres = [self.genre_listbox.get(i) for i in selected_indices]
+        genres = {genre_map[self.genre_listbox.get(i)] for i in selected_indices}
         
-        preferences = (length, genres)
+        # calls function to pass user input to tree
+        convert_user_input({length, genres}, 'decision_tree.csv')
         # TODO: Pass tuple to tree method for filtering.
         # i.e. movies = create_decisions(preferences)
         # self.show_movie_list(movies, "Movies for Your Selected Length and Genre(s)")
@@ -243,8 +263,6 @@ style.configure('Accent.TButton', font=('Arial', 14),
 style.configure('Secondary.TButton', font=('Arial', 14),
                 foreground='white', background='#FF6B6B')
 
-
-#creates the movie decision tree
 def build_decision_tree(file:str) -> None:
     tree = MovieDecisionTree(None, [])
     with open(file) as csv_file:
@@ -277,31 +295,29 @@ def convert_user_input(input:set, file: str) -> list:
 def get_rec(tree: MovieData, input:list) -> Movie:
     return 
 
+if __name__ == "__main__":
+# You can uncomment the following lines for code checking/debugging purposes.
+    # However, we recommend commenting out these lines when working with the large
+    # datasets, as checking representation invariants and preconditions greatly
+    # increases the running time of the functions/methods.
+    # import python_ta.contracts
+    # python_ta.contracts.check_all_contracts()
 
-
-
-# if __name__ == "__main__":
-# # You can uncomment the following lines for code checking/debugging purposes.
-#     # However, we recommend commenting out these lines when working with the large
-#     # datasets, as checking representation invariants and preconditions greatly
-#     # increases the running time of the functions/methods.
-#     # import python_ta.contracts
-#     # python_ta.contracts.check_all_contracts()
-
-#     # import doctest
-#     #
-#     # doctest.testmod()
-#     #
-#     # import python_ta
-#     #
-#     # python_ta.check_all(config={
-#     #     'max-line-length': 120,
-#     #     'disable': ['E1136'],
-#     #     'extra-imports': ['csv', 'networkx'],
-#     #     'allowed-io': ['load_movie_actor_graph'],
-#     #     'max-nested-blocks': 4
-#     # })
-#     # root1 = tk.Tk()
-#     # app = CineMatch(root1)
-#     # root1.mainloop()
-
+    # import doctest
+    #
+    # doctest.testmod()
+    #
+    # import python_ta
+    #
+    # python_ta.check_all(config={
+    #     'max-line-length': 120,
+    #     'disable': ['E1136'],
+    #     'extra-imports': ['csv', 'networkx'],
+    #     'allowed-io': ['load_movie_actor_graph'],
+    #     'max-nested-blocks': 4
+    # })
+    root1 = tk.Tk()
+    app = CineMatch(root1)
+    root1.mainloop()
+    # test 
+    print(convert_user_input({'runtime_bin_short', 'genre_Family'}, 'decision_tree.csv'))
