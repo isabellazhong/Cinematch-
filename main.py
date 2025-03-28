@@ -271,10 +271,12 @@ def convert_user_input(input:set, file: str) -> list:
         
         return encoded
 
-def get_rec(tree: MovieData, input:list) -> Movie:
-    return 
+# def get_recs(tree: MovieDecisionTree, input:list) -> list[Movie]:
 
+    
 
+# test 
+print(convert_user_input({'runtime_bin_short','genre_Family', 'genre_Action'}, 'decision_tree.csv'))
 
 
 # if __name__ == "__main__":
