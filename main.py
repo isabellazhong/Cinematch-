@@ -4,6 +4,8 @@ import tkinter.font as tkfont
 # from tree import Movie
 from MovieActorGraph import _Vertex, Graph, load_movie_actor_graph
 from MovieData import MovieData
+import csv
+from tree import Movie, MovieDecisionTree
 
 
 class CineMatch:
@@ -210,7 +212,7 @@ class CineMatch:
         genres = {genre_map[self.genre_listbox.get(i)] for i in selected_indices}
         
         # calls function to pass user input to tree
-        convert_user_input({length, genres}, 'decision_tree.csv')
+        convert_user_input(genres.add(length), 'decision_tree.csv')
         # TODO: Pass tuple to tree method for filtering.
         # i.e. movies = create_decisions(preferences)
         # self.show_movie_list(movies, "Movies for Your Selected Length and Genre(s)")

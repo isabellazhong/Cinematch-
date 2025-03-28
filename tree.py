@@ -141,17 +141,33 @@ class MovieDecisionTree:
             new_tree = MovieDecisionTree(lst[0], [])
             self._subtrees.append(new_tree)
             new_tree.create_branch(lst[1:]) 
-    
 
-    #returns all movies that have the same input up to a specific depth of a tree 
-    def movie_up_to_depth(self, input: list, depth_index:int):
-        if 1 not in input:
-            return
+    #goes to leftmost branch 
+    def go_left_most(self):
+        if self._root == None:
+            return 
+        elif not self._subtrees:
+            return [self._root] 
         else:
-            movie_list = []
+            left = self._subtrees[len(self._subtrees) - 1]
+            return left.go_left_most() 
+    
+    #goes to right most branch 
+    def go_right_most(self):
+        if self._root == None:
+            return 
+        elif not self._subtrees:
+            return [self._root] 
+        else:
+            left = self._subtrees[0]
+            return left.go_right_most() 
+    
+    #returns all movies that have the same input up to a specific depth of a tree 
+    # def movie_up_to_depth(self, input: list, depth_index:int):
+    #     MAX_DEPTH = 
+            
             
               
-
 y = Binary_Csv('imdb_top_1000.csv', 'decision_tree.csv')
 # print(y.transform_movie_data('movie_data_small.csv'))
 y.create_decision_csv()
