@@ -6,10 +6,11 @@ from sklearn import tree
 from sklearn.preprocessing import OneHotEncoder
 import numpy as np
 from MovieData import MovieData
+from typing import Any, Optional
 
 class Movie:
 
-    """The class for the movie, which will be a node in the
+    """The class for the movie, which will be a end node in the
         decision tree when choosing a movie to watch for the user
 
         Instance Attributes:
@@ -20,23 +21,43 @@ class Movie:
     """
 
     title: str
+    link: str
     genre: str
     duration: float
     rating: int
 
+    def __init__(self, title, link, genre, duration, rating):
+        self.title = title
+        self.link = link
+        self.genre = genre
+        self.duration = duration
+        self.rating = rating
 
-class MovieDecisionTree:
+    #turns the class into a string to store in csv
+    def __repr__(self) -> str:
+        return f"Movie('{self.title}', '{self.link}', '{self.genre}', '{self.duration}', '{self.rating}')"
 
-    """This class is a decision tree to filter out
-        movies for the user to watch
-    """
-    def __init__(self):
-        self.tree = None
 
+class Binary_Csv:
+    movie_file: str
+    decision_file: str
+
+
+    def __init__(self, m_file, d_file):
+        self.movie_file = m_file
+        self.decision_file = d_file
+    
+
+    # hot one encodes data of a specific column
+    def encode(self, key: str, df: pd.DataFrame):
+        df_explode = df.explode(key)
+        df_onehot = pd.get_dummies(df_explode, columns=[key], dtype=int)
+        return df_onehot
+        
 
     #uses one hot encoder to convert to numerical data
-    def transform_movie_data(self, movie_file:str):
-        movies = MovieData.load_movie_basics(movie_file)
+    def transform_movie_data(self):
+        movies = MovieData.load_movie_basics(self.movie_file)
         data = []
         MOVIE_OBJECT_INDEX = 1
 
@@ -52,7 +73,8 @@ class MovieDecisionTree:
                 "genre": genres if genres else np.nan,
                 "runtime": runtime,
                 "overview": overview,
-                "imdb_rating": float(imdb_rating) if imdb_rating else np.nan 
+                "imdb_rating": float(imdb_rating) if imdb_rating else np.nan,
+                "movie_node": Movie(series_title, poster_link, genres, runtime, imdb_rating).__repr__() 
             })
 
 
@@ -60,36 +82,70 @@ class MovieDecisionTree:
         df = pd.DataFrame(data)
         df['runtime'] =  df['runtime'].str.extract(r'(\d+)').astype(float)
         df['genre'] = df['genre'].str.split(', ')
-        df_explode_genre = df.explode('genre')
-        df_onehot_genre = pd.get_dummies(df_explode_genre, columns=['genre'], dtype=int)
-        df2 = df_onehot_genre.groupby('title', as_index=False).sum()
-
       
         runtime_intervals = [0, 60, 90, 120, 180, 240, np.inf]
         runtime_labels = ['very-short', 'short', 'mid', 'mid-long', 'long', 'very-long']
-        df2['runtime_bin'] = pd.cut(df2['runtime'], bins=runtime_intervals, labels=runtime_labels)
-        
-        df_explode_runtime = df2.explode('runtime_bin')
-        df_onehot_runtime = pd.get_dummies(df_explode_runtime, columns=['runtime_bin'], dtype=int)
-        df_final = df_onehot_runtime.groupby('title', as_index=False).sum()
-        return df_final
+        df['runtime_bin'] = pd.cut(df['runtime'], bins=runtime_intervals, labels=runtime_labels)
+        df_final = self.encode('runtime_bin', df)
+        df_final = self.encode('genre', df_final)
 
+        df_final = df_final.groupby('title', as_index=False).max()
+        return df_final
+    
     #creates a csv of a pathway for each movie that the tree can pass through
-    def create_decision_csv(self, movie_file:str, decision_file:str):
-        df = self.transform_movie_data(movie_file)
+    def create_decision_csv(self):
+        df = self.transform_movie_data()
         genre_columns = [col for col in df.columns if col.startswith('genre_')]
         runtime_columns = [col for col in df.columns if col.startswith('runtime_bin_')]
-        df = df[['title'] + runtime_columns + genre_columns]
-        df.to_csv(decision_file, encoding='utf-8', index=False)
-        
+        df = df[['movie_node'] +  runtime_columns + genre_columns]
+        df.to_csv(self.decision_file, encoding='utf-8', index=False)
 
-    # def get_user_input(question: list, input:list):
 
-        
+class MovieDecisionTree:
 
-y = MovieDecisionTree()
+    """This class is a decision tree to filter out
+        movies for the user to watch
+    """
+    _root: Optional[Any]
+    _subtrees: list[Any]
+
+    def __init__(self):
+        self.tree = None
+
+    #traverses the tree with user_input 
+    def traverse_tree(self, inputs: list):
+
+        if self.is_empty():
+            return []
+        elif not inputs:
+            if not self._subtrees:
+                return []
+            else:
+                return [tree._root for tree in self._subtrees]
+        else:
+            for subtree in self._subtrees:
+                if subtree._root == inputs[0]:
+                    return subtree.traverse_tree(inputs[1:])
+        raise KeyError
+    
+     #creates a branch for the tree
+    def create_branch(self, lst: list):
+        if not lst: 
+            pass 
+        else: 
+            for subtree in self._subtrees:
+                if lst[0] == subtree._root:
+                    self.create_branch(lst[1:])
+                    return 
+
+            new_tree = MovieDecisionTree(lst[0], [])
+            self._subtrees.append(new_tree)
+            new_tree.create_branch(lst[1:]) 
+              
+
+y = Binary_Csv('imdb_top_1000.csv', 'decision_tree.csv')
 # print(y.transform_movie_data('movie_data_small.csv'))
-y.create_decision_csv('imdb_top_1000.csv', 'decision_tree.csv')
+y.create_decision_csv()
    
 
 
