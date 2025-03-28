@@ -36,9 +36,6 @@ class Movie:
     #turns the class into a string to store in csv
     def __repr__(self) -> str:
         return f"Movie('{self.title}', '{self.link}', '{self.genre}', '{self.duration}', '{self.rating}')"
-    
-    def from_repr(self, object:str) ->  Any:
-        return eval(object)
 
 
 class Binary_Csv:
@@ -136,10 +133,15 @@ class MovieDecisionTree:
         if not lst: 
             pass 
         else: 
-            return
-    
+            for subtree in self._subtrees:
+                if lst[0] == subtree._root:
+                    self.create_branch(lst[1:])
+                    return 
 
-        
+            new_tree = MovieDecisionTree(lst[0], [])
+            self._subtrees.append(new_tree)
+            new_tree.create_branch(lst[1:]) 
+              
 
 y = Binary_Csv('imdb_top_1000.csv', 'decision_tree.csv')
 # print(y.transform_movie_data('movie_data_small.csv'))
