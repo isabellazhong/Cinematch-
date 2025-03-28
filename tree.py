@@ -26,6 +26,19 @@ class Movie:
     duration: float
     rating: int
 
+    def __init__(self, title, link, genre, duration, rating):
+        self.title = title
+        self.link = link
+        self.genre = genre
+        self.duration = duration
+        self.rating = rating
+
+    #turns the class into a string to store in csv
+    def __repr__(self) -> str:
+        return f"Movie('{self.title}', '{self.link}', '{self.genre}', '{self.duration}', '{self.rating}')"
+    
+    def from_repr(self, object:str) ->  Any:
+        return eval(object)
 
 
 class Binary_Csv:
@@ -63,7 +76,8 @@ class Binary_Csv:
                 "genre": genres if genres else np.nan,
                 "runtime": runtime,
                 "overview": overview,
-                "imdb_rating": float(imdb_rating) if imdb_rating else np.nan 
+                "imdb_rating": float(imdb_rating) if imdb_rating else np.nan,
+                "movie_node": Movie(series_title, poster_link, genres, runtime, imdb_rating).__repr__() 
             })
 
 
@@ -86,7 +100,7 @@ class Binary_Csv:
         df = self.transform_movie_data()
         genre_columns = [col for col in df.columns if col.startswith('genre_')]
         runtime_columns = [col for col in df.columns if col.startswith('runtime_bin_')]
-        df = df[['title'] + runtime_columns + genre_columns]
+        df = df[['movie_node'] +  runtime_columns + genre_columns]
         df.to_csv(self.decision_file, encoding='utf-8', index=False)
 
 
@@ -101,12 +115,6 @@ class MovieDecisionTree:
     def __init__(self):
         self.tree = None
 
-    #creates a branch for a decisio to a movie 
-    def create_branch(lst: list):
-        dummy_var =  0
-
- 
-    
     #traverses the tree with user_input 
     def traverse_tree(self, inputs: list):
 
@@ -122,6 +130,14 @@ class MovieDecisionTree:
                 if subtree._root == inputs[0]:
                     return subtree.traverse_tree(inputs[1:])
         raise KeyError
+    
+     #creates a branch for the tree
+    def create_branch(self, lst: list):
+        if not lst: 
+            pass 
+        else: 
+            return
+    
 
         
 
