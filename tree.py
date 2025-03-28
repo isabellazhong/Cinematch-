@@ -147,9 +147,9 @@ class MovieDecisionTree:
         if self._root == None:
             return 
         elif not self._subtrees:
-            return [self._root] 
+            return self._root
         else:
-            left = self._subtrees[len(self._subtrees) - 1]
+            left = self._subtrees[0]
             return left.go_left_most() 
     
     #goes to right most branch 
@@ -157,20 +157,42 @@ class MovieDecisionTree:
         if self._root == None:
             return 
         elif not self._subtrees:
-            return [self._root] 
+            return self._root 
         else:
-            left = self._subtrees[0]
+            left = self._subtrees[-1]
             return left.go_right_most() 
     
     #returns all movies that have the same input up to a specific depth of a tree 
-    # def movie_up_to_depth(self, input: list, depth_index:int):
-    #     MAX_DEPTH = 
+    def movie_up_to_depth(self, input: list, depth_index:int):
+        MAX_DEPTH = 27 
+        if depth_index >= MAX_DEPTH:
+            return []
+        else:
+            tree = self.traverse_tree(input[:depth_index])
+
+            if not tree:
+                return [] 
+            elif not tree._subtrees:
+                return []
+            else: 
+                movies = []
+                for subtree in tree._subtrees:
+                    right = subtree.go_right_most() 
+                    left = subtree.go_left_most()
+
+                    if right is not None:
+                        movies.append(right)
+                    if left is not None:
+                        movies.append(left)
+
+                return movies
+                
             
-            
-              
 y = Binary_Csv('imdb_top_1000.csv', 'decision_tree.csv')
 # print(y.transform_movie_data('movie_data_small.csv'))
 y.create_decision_csv()
+
+
    
 
 
