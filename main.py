@@ -19,7 +19,7 @@ class CineMatch:
 
         # Initialize recommendation functionality components
         # self.tree = Movie()
-        # self.graph = load_movie_actor_graph("imdb_top_1000.csv")
+        self.graph = load_movie_actor_graph("imdb_top_1000.csv")
 
         # Custom fonts
         self.title_font = tkfont.Font(family="Helvetica", size=24, weight="bold")
@@ -146,9 +146,10 @@ class CineMatch:
                          "Music", "Musical", "Mystery", "Romance", "Sci-Fi", "Support",
                          "Thriller", "War", "Western"]
         
+        #  listbox to allow multiple selections
         self.genre_listbox = tk.Listbox(genre_frame, selectmode="multiple",
                                         font=self.button_font, bg=self.colour_light,
-                                        fg=self.colour_dark, height=10)
+                                        fg=self.colour_dark, height=10)  
         
         for genre in genre_options:
             self.genre_listbox.insert(tk.END, genre)
@@ -163,15 +164,15 @@ class CineMatch:
 
         # Submit button
         submit_btn = tk.Button(self.recommendation_frame, text="Submit",
-                               command=self.process_preferences,
+                               command=self.process_preferences(),  # call processing function
                                font=self.button_font, fg="white", bg=self.colour_blue,
                                activebackground="#3E8E41", activeforeground="white",
                                borderwidth=0, highlightthickness=0)
         submit_btn.pack(pady=20)
 
-    def process_preferences(self, genre: str, length: str):
+    def process_preferences(self):
         """
-        Store the given preferences into a tuple
+        Stores the preferences into a tuple
         """
         length_map = {
             "0-60 minutes": "very-short",
@@ -187,8 +188,10 @@ class CineMatch:
         selected_indices = self.genre_listbox.curselection()
         genres = [self.genre_listbox.get(i) for i in selected_indices]
         
-        preferences = (length, genre)
+        preferences = (length, genres)
         # TODO: Pass tuple to tree method for filtering.
+        # i.e. movies = create_decisions(preferences)
+        # self.show_movie_list(movies, "Movies for Your Selected Length and Genre(s)")
 
     def show_movie_list(self, movies, title):
         """
