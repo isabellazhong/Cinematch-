@@ -113,6 +113,28 @@ class MovieDecisionTree:
         self._root = root
         self._subtrees = subtrees
 
+    #build the decision tree using the binary file
+    @classmethod
+    def build_decision_tree(cls, csv_file):
+        tree = cls(None, [])
+        movie_data_dict = MovieData.load_movie_basics("imdb_top_1000.csv")
+
+        with open(csv_file, 'r', encoding='utf-8') as file:
+            reader = csv.DictReader(file)
+            for row in reader:
+                movie_title = row['movie_node']
+
+                movie_node = movie_data_dict.get(movie_title, None)
+
+                if movie_node is None:
+                    continue
+
+                pathway = [key for key, value in row.items() if key != 'movie_node' and int(value) == 1]
+
+                tree.create_branch(pathway + [movie_node])
+        return tree
+
+
     def is_empty(self):
         return self._root is None
 
@@ -129,7 +151,7 @@ class MovieDecisionTree:
             return []
         elif not inputs:
             if not self._subtrees:
-                return []
+                return [self._root]
             else:
                 return [tree.get_root() for tree in self._subtrees]
         else:
