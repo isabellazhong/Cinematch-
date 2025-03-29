@@ -99,7 +99,11 @@ class CineMatch:
         """
         actor_name = self.actor_entry.get()  # gets the inputted actor's name
         if actor_name:
-            movies = self.graph.get_neighbours(actor_name)
+            if actor_name not in self.graph.get_vertices('actor'):
+                messagebox.showinfo("Sorry", f"{actor_name} is not in our Database")
+                return
+             
+            movies = self.graph.get_neighbours(actor_name)    
             if movies:
                 self.show_movie_list(movies, f"Movies featuring {actor_name}")
             else:
