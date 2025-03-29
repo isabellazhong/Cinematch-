@@ -54,7 +54,7 @@ class CineMatch:
         #  Start button. If clicked go to actor screen
         start_btn = tk.Button(self.welcome_frame, text="Start Matching",
                               command=self.show_actor_screen,
-                              font=self.button_font, fg="white", bg="#0F6BAE",
+                              font=self.button_font, fg="purple", bg="#0F6BAE",
                               activebackground="#3E8E41", activeforeground="white",
                               borderwidth=0, highlightthickness=0)
         start_btn.pack(pady=40, ipadx=20, ipady=10)
@@ -80,7 +80,7 @@ class CineMatch:
         # Enter the inputted actor, goes to the graph functionality
         enter_btn = tk.Button(btn_frame, text="Enter Actor (Case Sensitive)",
                                command=self.handle_actor_search,
-                               font=self.button_font, fg="white", bg=self.colour_blue,
+                               font=self.button_font, fg="purple", bg=self.colour_blue,
                                activebackground="#3E8E41", activeforeground="white",
                                borderwidth=0, highlightthickness=0)
         enter_btn.pack(side=tk.LEFT, padx=10)
@@ -88,7 +88,7 @@ class CineMatch:
         # Skip to rest of recommendation system by calling tree functionality
         skip_btn = tk.Button(btn_frame, text="Skip to Recommendations",
                              command=self.show_tree_recommendations,
-                             font=self.button_font, fg="white", bg=self.colour_blue,
+                             font=self.button_font, fg="purple", bg=self.colour_blue,
                              activebackground="#FF3737", activeforeground="white",
                              borderwidth=0, highlightthickness=0)
         skip_btn.pack(side=tk.LEFT, padx=10)
@@ -166,7 +166,7 @@ class CineMatch:
         # Submit button
         submit_btn = tk.Button(self.recommendation_frame, text="Submit",
                                command= self.process_preferences,  # call processing function
-                               font=self.button_font, fg="white", bg=self.colour_blue,
+                               font=self.button_font, fg="purple", bg=self.colour_blue,
                                activebackground="#3E8E41", activeforeground="white",
                                borderwidth=0, highlightthickness=0)
         submit_btn.pack(pady=20)
