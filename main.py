@@ -66,7 +66,8 @@ class CineMatch:
         self.welcome_frame.pack_forget()
         self.actor_frame.pack(fill=tk.BOTH, expand=True, padx=50, pady=50)
 
-        tk.Label(self.actor_frame, text="(Optional) Enter the actor/actress you would like to watch:",
+        tk.Label(self.actor_frame, text="If you would like an actor/actress-only search, "
+        "Enter the actor/actress you would like to watch:",
                  font=("Helvetica", 16), fg="white", bg="#002138").pack(pady=20)
 
         self.actor_entry = tk.Entry(self.actor_frame, width=30, font=self.button_font,
@@ -86,7 +87,7 @@ class CineMatch:
         enter_btn.pack(side=tk.LEFT, padx=10)
 
         # Skip to rest of recommendation system by calling tree functionality
-        skip_btn = tk.Button(btn_frame, text="Skip to Recommendations",
+        skip_btn = tk.Button(btn_frame, text="Skip to Runtime/Genre Search",
                              command=self.show_tree_recommendations,
                              font=self.button_font, fg="purple", bg=self.colour_blue,
                              activebackground="#FF3737", activeforeground="white",
@@ -227,53 +228,37 @@ class CineMatch:
 
 
     def show_movie_list(self, movies, title):
-            """
-            Shows the list of movie recommendations in a window
-            """
-            # Create result window
-            result_window = tk.Toplevel(self.root)
-            result_window.title(title)
-            result_window.geometry("800x600")  # Increased width for better layout
+        """
+        Shows the list of movie recommendations in a window.
+        Displays only movie titles since the vertices are just movie titles.
+        """
+        # Create result window
+        result_window = tk.Toplevel(self.root)
+        result_window.title(title)
+        result_window.geometry("400x600")  # Adjusted width since we're only showing titles
 
-            style = ttk.Style(result_window)
-            style.configure("Treeview", font=("Helvetica", 12), rowheight=25)
-            style.configure("Treeview.Heading", font=("Helvetica", 14, "bold"))
+        style = ttk.Style(result_window)
+        style.configure("Treeview", font=("Helvetica", 12), rowheight=25)
+        style.configure("Treeview.Heading", font=("Helvetica", 14, "bold"))
 
-            # Tree showcase of movie recommendations
-            tree = ttk.Treeview(result_window,
-                                columns=("Title", "Year", "Genre", "Runtime", "Rating", "Director", "Cast"),
-                                show="headings")
+        # Tree showcase of movie recommendations
+        tree = ttk.Treeview(result_window, columns=("Title",), show="headings")
 
-            # Define column headings
-            tree.heading("Title", text="Movie Title")
-            tree.heading("Year", text="Year")
-            tree.heading("Genre", text="Genre")
-            tree.heading("Runtime", text="Runtime")
-            tree.heading("Rating", text="Rating")
-            tree.heading("Director", text="Director")
+        # Define column heading
+        tree.heading("Title", text="Movie Title")
 
-            # Adjust column widths if needed
-            tree.column("Title", width=150)
-            tree.column("Genre", width=120)
-            tree.column("Runtime", width=60)
-            tree.column("Rating", width=50)
-            tree.column("Director", width=120)
+        # Adjust column width
+        tree.column("Title", width=350, anchor="center")
 
-            # Insert data into the tree
-            for movie in movies:
-                if isinstance(movie, MovieData):  # movie should be a MovieData instance
-                    tree.insert("", tk.END, values=(
-                        movie.poster_title[1],          # Movie Title
-                        movie.genre_runtime[0],         # Genre
-                        movie.genre_runtime[1],         # Runtime
-                        movie.overview_rating[1],       # Rating
-                        movie.cast_director[1],        # Director
-                    ))
-            tree.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
+        # Insert data into the tree
+        for movie in movies:
+            tree.insert("", tk.END, values=(movie,))  # Movie is a string (title)
 
-            scrollbar = ttk.Scrollbar(result_window, orient="vertical", command=tree.yview)
-            tree.configure(yscrollcommand=scrollbar.set)
-            scrollbar.pack(side="right", fill="y")
+        tree.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
+
+        scrollbar = ttk.Scrollbar(result_window, orient="vertical", command=tree.yview)
+        tree.configure(yscrollcommand=scrollbar.set)
+        scrollbar.pack(side="right", fill="y")
 
 
 # Configure styles
