@@ -187,7 +187,8 @@ class CineMatch:
         genre_map = {
             "Action": "genre_Action",
             "Adventure": "genre_Animation",
-            "Biography": "genre_Comedy",
+            "Biography": "genre_Biography",
+            "Comedy": "genre_Comedy",
             "Crime": "genre_Crime",
             "Drama": "genre_Drama",
             "Family": "genre_Family",
@@ -345,4 +346,4 @@ if __name__ == "__main__":
     app = CineMatch(root1)
     root1.mainloop()
     # test
-    print(convert_user_input({'runtime_bin_short', 'genre_Family'}, 'decision_tree.csv'))
+    print(convert_user_input(('runtime_bin_short', 'genre_Family'), 'decision_tree.csv'))
