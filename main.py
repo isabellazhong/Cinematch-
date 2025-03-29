@@ -187,7 +187,8 @@ class CineMatch:
         }
         genre_map = {
             "Action": "genre_Action",
-            "Adventure": "genre_Animation",
+            "Adventure": "genre_Adventure",
+            "Animation": "genre_Animation",
             "Biography": "genre_Biography",
             "Comedy": "genre_Comedy",
             "Crime": "genre_Crime",
