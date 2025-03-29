@@ -1,7 +1,6 @@
 """A class for movie data."""
 import csv
 
-
 class MovieData:
     """Data object representing movie data
 
@@ -40,7 +39,7 @@ class MovieData:
         identifier to the MovieData object of the specific movie.
         """
         movies = {}
-        with open(filename) as f:
+        with open(filename, 'r', encoding='latin-1') as f:
             reader = csv.DictReader(f, delimiter=",")
             for row in reader:
                 poster_title = (row["Poster_Link"], row["Series_Title"])
@@ -49,8 +48,3 @@ class MovieData:
                 overview_rating = (row["Overview"], row["IMDB_Rating"])
                 movies[row["Series_Title"]] = MovieData(poster_title, genre_runtime, cast_director, overview_rating)
         return movies
-    
-
-  
-
-
