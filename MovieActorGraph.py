@@ -1,7 +1,6 @@
 from __future__ import annotations
 from typing import Any
 from MovieData import MovieData
-import networkx as nx
 
 
 class _Vertex:
@@ -149,9 +148,7 @@ if __name__ == '__main__':
     # import python_ta
     
     # python_ta.check_all(config={
-    #     'max-line-length': 120,
-    #     'disable': ['E1136'],
-    #     'extra-imports': ['csv', 'networkx'],
-    #     'allowed-io': ['load_movie_actor_graph'],
-    #     'max-nested-blocks': 4
+    #     'extra-imports': [],  # the names (strs) of imported modules
+    #     'allowed-io': [],     # the names (strs) of functions that call print/open/input
+    #     'max-line-length': 120
     # })
