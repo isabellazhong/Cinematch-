@@ -207,20 +207,13 @@ class CineMatch:
         }
 
         length = length_map[self.length_var.get()]
-        # Get selected genres from Listbox
         selected_indices = self.genre_listbox.curselection()
         genres = {genre_map[self.genre_listbox.get(i)] for i in selected_indices}
-
-        length = length_map[self.length_var.get()]
-
-        selected_indices = self.genre_listbox.curselection()
-        genres = {genre_map[self.genre_listbox.get(i)] for i in selected_indices}
-
         encoded_input = (length, tuple(genres))
-
         convert_user_input(encoded_input, 'decision_tree.csv')
+        decision_tree = build_decision_tree("imdb_top_1000.csv")
+        recommended_movies = get_rec(decision_tree, list(encoded_input))
 
-        recommended_movies = get_rec()
         if recommended_movies:
             self.show_movie_list(recommended_movies, "Movie Recommendations")
         else:
@@ -287,7 +280,7 @@ style.configure('Accent.TButton', font=('Arial', 14),
 style.configure('Secondary.TButton', font=('Arial', 14),
                 foreground='white', background='#FF6B6B')
 
-def build_decision_tree(file:str) -> None:
+def build_decision_tree(file:str) -> MovieDecisionTree:
     tree = MovieDecisionTree(None, [])
     with open(file) as csv_file:
         reader = csv.reader(csv_file)
@@ -296,6 +289,7 @@ def build_decision_tree(file:str) -> None:
             movie = row[0]
             movie_list = row[1:] + [movie]
             tree.create_branch(movie_list)
+    return tree
 
 #encodes the user input into a binary list so that it can traversre through the list
 def convert_user_input(input:tuple, file: str) -> list:
@@ -317,8 +311,10 @@ def convert_user_input(input:tuple, file: str) -> list:
         return encoded
 
 #TODO add this method
-def get_rec(tree: MovieData, input:list) -> None:
-    return
+def get_rec(tree: MovieDecisionTree, input: list) -> list:
+    recommendations = tree.movie_up_to_depth(input, depth_index=4)
+    return recommendations
+
 
 if __name__ == "__main__":
 # You can uncomment the following lines for code checking/debugging purposes.
@@ -345,4 +341,4 @@ if __name__ == "__main__":
     app = CineMatch(root1)
     root1.mainloop()
     # test
-    print(convert_user_input({'runtime_bin_short', 'genre_Family'}, 'decision_tree.csv'))
+    # print(convert_user_input({'runtime_bin_short', 'genre_Family'}, 'decision_tree.csv'))
