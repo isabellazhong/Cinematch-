@@ -115,17 +115,17 @@ class CineMatch:
         self.actor_frame.pack_forget()
         self.recommendation_frame.pack(fill=tk.BOTH, expand=True, padx=50, pady=50)
 
-        tk.Label(self.recommendation_frame, 
+        tk.Label(self.recommendation_frame,
                  text="Please select your preferences:",
                  font=("Helvetica", 16), fg="white", bg="#002138").pack(pady=20)
 
         # Runtime dropdown
         length_frame = tk.Frame(self.recommendation_frame, bg="#002138")
         length_frame.pack(pady=10)
-        
-        tk.Label(length_frame, text="Runtime:", 
+
+        tk.Label(length_frame, text="Runtime:",
                  font=self.button_font, fg="white", bg="#002138").pack(side=tk.LEFT, padx=10)
-        
+
         length_options = ["0-60 minutes", "60-90 minutes", "90-120 minutes", "120-180 minutes", "180-240 minutes", "240+ minutes"]
         self.length_var = tk.StringVar(value=length_options[0])
         length_dropdown = tk.OptionMenu(length_frame, self.length_var, *length_options)
@@ -138,29 +138,29 @@ class CineMatch:
         # Genre multiple-selection Listbox
         genre_frame = tk.Frame(self.recommendation_frame, bg="#002138")
         genre_frame.pack(pady=10)
-        
-        tk.Label(genre_frame, text="Select Genre(s):", 
+
+        tk.Label(genre_frame, text="Select Genre(s):",
                  font=self.button_font, fg="white", bg="#002138").pack(side=tk.LEFT, padx=10)
 
         genre_options = ["Action", "Adventure", "Animation", "Biography", "Comedy", "Crime",
                          "Drama", "Family", "Fantasy", "Film-Noir", "History", "Horror",
                          "Music", "Musical", "Mystery", "Romance", "Sci-Fi", "Support",
                          "Thriller", "War", "Western"]
-        
+
         #  listbox to allow multiple selections
         self.genre_listbox = tk.Listbox(genre_frame, selectmode="multiple",
                                         font=self.button_font, bg=self.colour_light,
-                                        fg=self.colour_dark, height=10)  
-        
+                                        fg=self.colour_dark, height=10)
+
         for genre in genre_options:
             self.genre_listbox.insert(tk.END, genre)
-        
+
         scrollbar = tk.Scrollbar(genre_frame)
         scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
-        
+
         self.genre_listbox.config(yscrollcommand=scrollbar.set)
         scrollbar.config(command=self.genre_listbox.yview)
-        
+
         self.genre_listbox.pack(side=tk.LEFT)
 
         # Submit button
@@ -188,20 +188,20 @@ class CineMatch:
             "Adventure": "genre_Animation",
             "Biography": "genre_Comedy",
             "Crime": "genre_Crime",
-            "Drama": "genre_Drama", 
-            "Family": "genre_Family", 
-            "Fantasy": "genre_Fantasy", 
-            "Film-Noir": "genre_Film-Noir", 
-            "History": "genre_History", 
+            "Drama": "genre_Drama",
+            "Family": "genre_Family",
+            "Fantasy": "genre_Fantasy",
+            "Film-Noir": "genre_Film-Noir",
+            "History": "genre_History",
             "Horror": "genre_Horror",
-            "Music": "genre_Music", 
-            "Musical": "genre_Musical", 
-            "Mystery": "genre_Mystery", 
-            "Romance": "genre_Romance", 
-            "Sci-Fi": "genre_Sci-Fi", 
+            "Music": "genre_Music",
+            "Musical": "genre_Musical",
+            "Mystery": "genre_Mystery",
+            "Romance": "genre_Romance",
+            "Sci-Fi": "genre_Sci-Fi",
             "Support": "genre_Support",
-            "Thriller": "genre_Thriller", 
-            "War": "genre_War", 
+            "Thriller": "genre_Thriller",
+            "War": "genre_War",
             "Western": "genre_Western"
         }
 
@@ -209,10 +209,10 @@ class CineMatch:
         # Get selected genres from Listbox
         selected_indices = self.genre_listbox.curselection()
         genres = {genre_map[self.genre_listbox.get(i)] for i in selected_indices}
-        
+
         # calls function to pass user input to tree
         convert_user_input({length, genres}, 'decision_tree.csv')
-        
+
 def show_movie_list(self, movies, title):
         """
         Shows the list of movie recommendations in a window
@@ -275,10 +275,10 @@ def build_decision_tree(file:str) -> None:
     tree = MovieDecisionTree(None, [])
     with open(file) as csv_file:
         reader = csv.reader(csv_file)
-        reader.next()
+        next(reader)
         for row in reader:
             movie = row[0]
-            movie_list = row[1:] + movie
+            movie_list = row[1:] + [movie]
             tree.create_branch(movie_list)
 
 #encodes the user input into a binary list so that it can traversre through the list
@@ -288,20 +288,21 @@ def convert_user_input(input:set, file: str) -> list:
         rows = list(reader)
         header = rows[0]
 
-        encoded = [] 
+        encoded = []
         # starts at one because header[0] is the movie node
-        header_index = 1 
+        header_index = 1
         while header_index < len(header):
             if header[header_index] in input:
                 encoded.append(1)
             else:
                 encoded.append(0)
             header_index += 1
-        
+
         return encoded
 
-def get_rec(tree: MovieData, input:list) -> Movie:
-    return 
+#TODO add this method
+def get_rec(tree: MovieData, input:list) -> None:
+    return
 
 if __name__ == "__main__":
 # You can uncomment the following lines for code checking/debugging purposes.
@@ -327,5 +328,5 @@ if __name__ == "__main__":
     root1 = tk.Tk()
     app = CineMatch(root1)
     root1.mainloop()
-    # test 
+    # test
     print(convert_user_input({'runtime_bin_short', 'genre_Family'}, 'decision_tree.csv'))
