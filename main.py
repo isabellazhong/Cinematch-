@@ -211,14 +211,21 @@ class CineMatch:
         selected_indices = self.genre_listbox.curselection()
         genres = {genre_map[self.genre_listbox.get(i)] for i in selected_indices}
 
-        # calls function to pass user input to tree
-        encoded_input = convert_user_input({length, genres}, 'decision_tree.csv')
-        recommended_movies = get_rec(self.graph, encoded_input)
+        length = length_map[self.length_var.get()]
 
+        selected_indices = self.genre_listbox.curselection()
+        genres = {genre_map[self.genre_listbox.get(i)] for i in selected_indices}
+
+        encoded_input = (length, tuple(genres))
+
+        convert_user_input(encoded_input, 'decision_tree.csv')
+
+        recommended_movies = get_rec()
         if recommended_movies:
             self.show_movie_list(recommended_movies, "Movie Recommendations")
         else:
             messagebox.showinfo("No Recommendations", "No movie recommendations found for your preferences.")
+
 
 
     def show_movie_list(self, movies, title):
@@ -291,7 +298,7 @@ def build_decision_tree(file:str) -> None:
             tree.create_branch(movie_list)
 
 #encodes the user input into a binary list so that it can traversre through the list
-def convert_user_input(input:set, file: str) -> list:
+def convert_user_input(input:tuple, file: str) -> list:
     with open(file) as csv_file:
         reader = csv.reader(csv_file)
         rows = list(reader)
