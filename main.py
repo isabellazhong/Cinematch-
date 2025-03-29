@@ -211,7 +211,16 @@ class CineMatch:
         genres = {genre_map[self.genre_listbox.get(i)] for i in selected_indices}
 
         # calls function to pass user input to tree
-        convert_user_input({length, genres}, 'decision_tree.csv')
+        length = length_map[self.length_var.get()]
+
+        selected_indices = self.genre_listbox.curselection()
+        genres = {genre_map[self.genre_listbox.get(i)] for i in selected_indices}
+
+        encoded_input = (length, tuple(genres))
+
+        convert_user_input(encoded_input, 'decision_tree.csv')
+
+        recommended_movies = get_rec()
 
 def show_movie_list(self, movies, title):
         """
