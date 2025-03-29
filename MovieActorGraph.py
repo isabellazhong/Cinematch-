@@ -93,31 +93,6 @@ class Graph:
 
         return {self._vertices[x].item for x in self._vertices if self._vertices[x].kind == kind}
 
-    # TODO: Delete this later
-    def to_networkx(self, max_vertices: int = 5000) -> nx.Graph:
-        """Convert this graph into a networkx Graph.
-
-        max_vertices specifies the maximum number of vertices that can appear in the graph.
-        (This is necessary to limit the visualization output for large graphs.)
-
-        Note that this method is provided for you, and you shouldn't change it.
-        """
-        graph_nx = nx.Graph()
-        for v in self._vertices.values():
-            graph_nx.add_node(v.item, kind=v.kind)
-
-            for u in v.neighbours:
-                if graph_nx.number_of_nodes() < max_vertices:
-                    graph_nx.add_node(u.item, kind=u.kind)
-
-                if u.item in graph_nx.nodes:
-                    graph_nx.add_edge(v.item, u.item)
-
-            if graph_nx.number_of_nodes() >= max_vertices:
-                break
-
-        return graph_nx
-
 def load_movie_actor_graph(movie_file: str) -> Graph:
     """Return a graph corresponding to the given datasets.
 
@@ -142,7 +117,6 @@ def load_movie_actor_graph(movie_file: str) -> Graph:
     >>> 'Al Pacino' in cast
     True
     """
-    # my_graph = load_movie_actor_graph("movie_data_small.csv")
 
     graph = Graph()
 
