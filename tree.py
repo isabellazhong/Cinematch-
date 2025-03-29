@@ -113,28 +113,6 @@ class MovieDecisionTree:
         self._root = root
         self._subtrees = subtrees
 
-    #build the decision tree using the binary file
-    @classmethod
-    def build_decision_tree(cls, csv_file):
-        tree = cls(None, [])
-        movie_data_dict = MovieData.load_movie_basics("imdb_top_1000.csv")
-
-        with open(csv_file, 'r', encoding='utf-8') as file:
-            reader = csv.DictReader(file)
-            for row in reader:
-                movie_title = row['movie_node']
-
-                movie_node = movie_data_dict.get(movie_title, None)
-
-                if movie_node is None:
-                    continue
-
-                pathway = [key for key, value in row.items() if key != 'movie_node' and int(value) == 1]
-
-                tree.create_branch(pathway + [movie_node])
-        return tree
-
-
     def is_empty(self):
         return self._root is None
 
@@ -146,28 +124,29 @@ class MovieDecisionTree:
 
     #traverses the tree with user_input
     def traverse_tree(self, inputs: list):
-
+        
         if self.is_empty():
             return []
         elif not inputs:
             if not self._subtrees:
-                return [self._root]
+                return []
             else:
-                return [tree.get_root() for tree in self._subtrees]
+                return [subtree._root for subtree in self._subtrees]
         else:
             for subtree in self._subtrees:
-                if subtree.get_root() == inputs[0]:
+                if subtree.get_root() == str(inputs[0]):
                     return subtree.traverse_tree(inputs[1:])
         raise KeyError
-
+      
+    
      #creates a branch for the tree
     def create_branch(self, lst: list):
         if not lst:
-            pass
+            return 
         else:
             for subtree in self._subtrees:
                 if lst[0] == subtree.get_root():
-                    self.create_branch(lst[1:])
+                    subtree.create_branch(lst[1:])
                     return
 
             new_tree = MovieDecisionTree(lst[0], [])
@@ -193,33 +172,53 @@ class MovieDecisionTree:
         else:
             left = self._subtrees[-1]
             return left.go_right_most()
+        
+    def get_movies(self):
+        movies = []
 
+        if not self.get_root() or not self.get_subtrees():
+            return []  # No further traversal possible
+        
+        seen_movies = set()  # To track unique movies and prevent duplicates
+        
+        # Traverse subtrees and get rightmost and leftmost nodes
+        for subtree in self.get_subtrees():
+            right = subtree.go_right_most()  # Make sure this returns the rightmost movie
+            left = subtree.go_left_most()    # Make sure this returns the leftmost movie
+            
+            # Add right movie if it is unique
+            if right is not None and right not in seen_movies:
+                movies.append(right)
+                seen_movies.add(right)
+            
+            # Add left movie if it is unique
+            if left is not None and left not in seen_movies:
+                movies.append(left)
+                seen_movies.add(left)
+        
+        return movies
+    
     #returns all movies that have the same input up to a specific depth of a tree
-    def movie_up_to_depth(self, input: list, depth_index:int):
+    def movie_up_to_depth(self, input: list, depth_index: int):
         MAX_DEPTH = 27
-        if depth_index >= MAX_DEPTH:
+        if depth_index > MAX_DEPTH:
             return []
+        
+        # Traverse the tree up to the specific depth
+        trees = self.traverse_tree(input[:depth_index])
+        print(trees)
+        movies = [] 
+        if len(trees) > 1:
+            for tree in trees:
+                movies.extend(tree.get_movies())
         else:
-            tree = self.traverse_tree(input[:depth_index])
-
-            if not tree:
-                return []
-            elif not tree.get_subtrees():
-                return []
-            else:
-                movies = []
-                for subtree in tree.get_subtrees():
-                    right = subtree.go_right_most()
-                    left = subtree.go_left_most()
-
-                    if right is not None:
-                        movies.append(right)
-                    if left is not None:
-                        movies.append(left)
-
-                return movies
+            movies = tree.get_movies()
+        
+        return movies
 
 
-y = Binary_Csv('imdb_top_1000.csv', 'decision_tree.csv')
-# print(y.transform_movie_data('movie_data_small.csv'))
-y.create_decision_csv()
+
+# y = Binary_Csv('movie_data_small.csv', 'decision_tree.csv')
+# # print(y.transform_movie_data('movie_data_small.csv'))
+# y.create_decision_csv()
+
