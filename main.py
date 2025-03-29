@@ -165,7 +165,7 @@ class CineMatch:
 
         # Submit button
         submit_btn = tk.Button(self.recommendation_frame, text="Submit",
-                               command=self.process_preferences(),  # call processing function
+                               command= self.process_preferences,  # call processing function
                                font=self.button_font, fg="white", bg=self.colour_blue,
                                activebackground="#3E8E41", activeforeground="white",
                                borderwidth=0, highlightthickness=0)
@@ -261,6 +261,7 @@ def show_movie_list(self, movies, title):
         scrollbar = ttk.Scrollbar(result_window, orient="vertical", command=tree.yview)
         tree.configure(yscrollcommand=scrollbar.set)
         scrollbar.pack(side="right", fill="y")
+
 
 # Configure styles
 style = ttk.Style()
