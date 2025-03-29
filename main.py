@@ -171,7 +171,6 @@ class CineMatch:
                                borderwidth=0, highlightthickness=0)
         submit_btn.pack(pady=20)
 
-
     def process_preferences(self):
         """
         Stores the preferences into a tuple
@@ -186,7 +185,8 @@ class CineMatch:
         }
         genre_map = {
             "Action": "genre_Action",
-            "Adventure": "genre_Animation",
+            "Animation": "genre_Animation",
+            "Adventure": "genre_Adventure",
             "Biography": "genre_Biography",
             "Comedy": "genre_Comedy",
             "Crime": "genre_Crime",
