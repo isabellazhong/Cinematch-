@@ -1,7 +1,6 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
 import tkinter.font as tkfont
-# from tree import Movie
 from MovieActorGraph import _Vertex, Graph, load_movie_actor_graph
 from MovieData import MovieData
 import csv
@@ -177,12 +176,12 @@ class CineMatch:
         Stores the preferences into a tuple
         """
         length_map = {
-            "0-60 minutes": "very-short",
-            "60-90 minutes": "short",
-            "90-120 minutes": "mid",
-            "120-180 minutes": "mid-long",
-            "180-240 minutes": "long",
-            "240+ minutes": "very-long"
+            "0-60 minutes": "runtime_bin_very-short",
+            "60-90 minutes": "runtime_bin_short",
+            "90-120 minutes": "runtime_bin_mid",
+            "120-180 minutes": "runtime_bin_mid-long",
+            "180-240 minutes": "runtime_bin_long",
+            "240+ minutes": "runtime_bin_very-long"
         }
         genre_map = {
             "Action": "genre_Action",
@@ -205,56 +204,63 @@ class CineMatch:
             "War": "genre_War", 
             "Western": "genre_Western"
         }
-        
+
         length = length_map[self.length_var.get()]
         # Get selected genres from Listbox
         selected_indices = self.genre_listbox.curselection()
         genres = {genre_map[self.genre_listbox.get(i)] for i in selected_indices}
         
         # calls function to pass user input to tree
-        convert_user_input(genres.add(length), 'decision_tree.csv')
-        # TODO: Pass tuple to tree method for filtering.
-        # i.e. movies = create_decisions(preferences)
-        # self.show_movie_list(movies, "Movies for Your Selected Length and Genre(s)")
-
-    def show_movie_list(self, movies, title):
+        convert_user_input({length, genres}, 'decision_tree.csv')
+        
+def show_movie_list(self, movies, title):
         """
         Shows the list of movie recommendations in a window
         """
         # Create result window
         result_window = tk.Toplevel(self.root)
         result_window.title(title)
-        result_window.geometry("600x400")
+        result_window.geometry("800x600")  # Increased width for better layout
 
         style = ttk.Style(result_window)
-        style.configure("Treeview", font=("Arial", 12), rowheight=25)
-        style.configure("Treeview.Heading", font=("Arial", 14, "bold"))
+        style.configure("Treeview", font=("Helvetica", 12), rowheight=25)
+        style.configure("Treeview.Heading", font=("Helvetica", 14, "bold"))
 
         # Tree showcase of movie recommendations
-        tree = ttk.Treeview(result_window, columns=("Title", "Year", "Rating"), show="headings")
+        tree = ttk.Treeview(result_window,
+                            columns=("Title", "Year", "Genre", "Runtime", "Rating", "Director", "Cast"),
+                            show="headings")
+
+        # Define column headings
         tree.heading("Title", text="Movie Title")
         tree.heading("Year", text="Year")
+        tree.heading("Genre", text="Genre")
+        tree.heading("Runtime", text="Runtime")
         tree.heading("Rating", text="Rating")
+        tree.heading("Director", text="Director")
 
+        # Adjust column widths if needed
+        tree.column("Title", width=150)
+        tree.column("Genre", width=120)
+        tree.column("Runtime", width=60)
+        tree.column("Rating", width=50)
+        tree.column("Director", width=120)
+
+        # Insert data into the tree
         for movie in movies:
-            if isinstance(movie, dict):
-                tree.insert("", tk.END, values=(movie.get('title', ''), 
-                                                movie.get('year', ''), 
-                                                movie.get('rating', '')))
-            elif isinstance(movie, str):
-                tree.insert("", tk.END, values=(movie, '', ''))
-            else:
-                tree.insert("", tk.END, values=(getattr(movie, 'title', ''),
-                                                getattr(movie, 'year', ''),
-                                                getattr(movie, 'rating', '')))
-
+            if isinstance(movie, MovieData):  # movie should be a MovieData instance
+                tree.insert("", tk.END, values=(
+                    movie.poster_title[1],          # Movie Title
+                    movie.genre_runtime[0],         # Genre
+                    movie.genre_runtime[1],         # Runtime
+                    movie.overview_rating[1],       # Rating
+                    movie.cast_director[1],        # Director
+                ))
         tree.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
 
         scrollbar = ttk.Scrollbar(result_window, orient="vertical", command=tree.yview)
         tree.configure(yscrollcommand=scrollbar.set)
         scrollbar.pack(side="right", fill="y")
-
-
 
 # Configure styles
 style = ttk.Style()
@@ -275,10 +281,10 @@ def build_decision_tree(file:str) -> None:
             movie_list = row[1:] + movie
             tree.create_branch(movie_list)
 
-#encodes the user input into a binary lost so that it can traversre through the list
+#encodes the user input into a binary list so that it can traversre through the list
 def convert_user_input(input:set, file: str) -> list:
     with open(file) as csv_file:
-        reader= csv.reader(csv_file)
+        reader = csv.reader(csv_file)
         rows = list(reader)
         header = rows[0]
 
@@ -294,7 +300,8 @@ def convert_user_input(input:set, file: str) -> list:
         
         return encoded
 
-# def get_recs(tree: MovieDecisionTree, input:list) -> list[Movie]:
+def get_rec(tree: MovieData, input:list) -> Movie:
+    return 
 
 if __name__ == "__main__":
 # You can uncomment the following lines for code checking/debugging purposes.
