@@ -102,6 +102,8 @@ class CineMatch:
             movies = self.graph.get_neighbours(actor_name)
             if movies:
                 self.show_movie_list(movies, f"Movies featuring {actor_name}")
+            elif actor_name not in self.graph.get_vertices():
+                messagebox.showinfo("Not Found in Data", f"No movies found for {actor_name} in our database.")
             else:
                 messagebox.showinfo("Not Found", f"No movies found for {actor_name}")
 
@@ -341,4 +343,4 @@ if __name__ == "__main__":
     app = CineMatch(root1)
     root1.mainloop()
     # test
-    print(convert_user_input({'runtime_bin_short', 'genre_Family'}, 'decision_tree.csv'))
+    print(convert_user_input(('runtime_bin_short', 'genre_Family'), 'decision_tree.csv'))
