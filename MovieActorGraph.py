@@ -1,5 +1,4 @@
 from __future__ import annotations
-import csv
 from typing import Any
 from MovieData import MovieData
 import networkx as nx
@@ -134,13 +133,13 @@ def load_movie_actor_graph(movie_file: str) -> Graph:
 
     >>> g = load_movie_actor_graph("movie_data_small.csv")
     >>> len(g.get_vertices(kind='movie'))
-    2
+    4
     >>> len(g.get_vertices(kind='actor'))
-    7
+    14
     >>> cast = g.get_neighbours('The Godfather')
     >>> len(cast)
     4
-    >>> 'RUPAUL' in cast
+    >>> 'Al Pacino' in cast
     True
     """
     # my_graph = load_movie_actor_graph("movie_data_small.csv")
@@ -161,17 +160,17 @@ def load_movie_actor_graph(movie_file: str) -> Graph:
     return graph
 
 
-#if __name__ == '__main__':
+if __name__ == '__main__':
     # You can uncomment the following lines for code checking/debugging purposes.
     # However, we recommend commenting out these lines when working with the large
     # datasets, as checking representation invariants and preconditions greatly
     # increases the running time of the functions/methods.
-    # import python_ta.contracts
-    # python_ta.contracts.check_all_contracts()
+    #import python_ta.contracts
+    #python_ta.contracts.check_all_contracts()
 
-    # import doctest
+    import doctest
     
-    # doctest.testmod()
+    doctest.testmod(verbose='TRUE')
     
     # import python_ta
     
