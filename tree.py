@@ -131,10 +131,10 @@ class MovieDecisionTree:
             if not self._subtrees:
                 return []
             else:
-                return [tree._root for tree in self._subtrees]
+                return [tree.get_root() for tree in self._subtrees]
         else:
             for subtree in self._subtrees:
-                if subtree._root == inputs[0]:
+                if subtree.get_root() == inputs[0]:
                     return subtree.traverse_tree(inputs[1:])
         raise KeyError
 
@@ -144,7 +144,7 @@ class MovieDecisionTree:
             pass
         else:
             for subtree in self._subtrees:
-                if lst[0] == subtree._root:
+                if lst[0] == subtree.get_root():
                     self.create_branch(lst[1:])
                     return
 
@@ -154,7 +154,7 @@ class MovieDecisionTree:
 
     #goes to leftmost branch
     def go_left_most(self):
-        if self._root == None:
+        if self._root is None:
             return
         elif not self._subtrees:
             return self._root
@@ -164,7 +164,7 @@ class MovieDecisionTree:
 
     #goes to right most branch
     def go_right_most(self):
-        if self._root == None:
+        if self._root is None:
             return
         elif not self._subtrees:
             return self._root
@@ -182,11 +182,11 @@ class MovieDecisionTree:
 
             if not tree:
                 return []
-            elif not tree._subtrees:
+            elif not tree.get_subtrees():
                 return []
             else:
                 movies = []
-                for subtree in tree._subtrees:
+                for subtree in tree.get_subtrees():
                     right = subtree.go_right_most()
                     left = subtree.go_left_most()
 
