@@ -71,6 +71,7 @@ class MovieData:
                 movies[row["Series_Title"]] = MovieData(poster_title, genre_runtime, cast_director, overview_rating)
         return movies
 
+
 if __name__ == '__main__':
 
     import python_ta.contracts

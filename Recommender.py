@@ -8,7 +8,7 @@ you'll complete for Part 1 of this exercise.
 Copyright and Usage Information
 ===============================
 
-This file is solely for the personal and private use of 
+This file is solely for the personal and private use of
 Victoria Cai, Isabella Zhong, Maya Dowman, Grace-Keyi Wang. All forms of
 distribution of this code, whether as given or with any changes, are
 expressly prohibited.
@@ -72,13 +72,13 @@ class Recommender:
 
         # Initialize UI
         self.create_welcome_screen()
-    
+
     def extract_title(self, movie:Movie) -> str:
         """Extracts and returns the title from the given movie.
         """
         return movie.title
-    
-    def convert_user_input(self, input:tuple, file: str) -> list:
+
+    def convert_user_input(self, input: set, file: str) -> list:
         """
         Encodes the user input into a binary list so that it can traversre through the list.
         """
@@ -91,14 +91,14 @@ class Recommender:
             # starts at one because header[0] is the movie node
             header_index = 1
             while header_index < len(header):
-                if header[header_index] in input:  
+                if header[header_index] in input:
                     encoded.append(1)
                 else:
                     encoded.append(0)
                 header_index += 1
 
             return encoded
-    
+
     def create_welcome_screen(self):
         """
         Creates the welcome screen for PickMeWatchMe.
@@ -166,8 +166,8 @@ class Recommender:
             if actor_name not in self.graph.get_vertices('actor'):
                 messagebox.showinfo("Sorry", f"{actor_name} is not in our Database")
                 return
-             
-            movies = self.graph.get_neighbours(actor_name)    
+
+            movies = self.graph.get_neighbours(actor_name)
             if movies:
                 self.show_movie_list(movies, f"Movies featuring {actor_name}")
             else:
@@ -309,7 +309,7 @@ class Recommender:
         # Create result window
         result_window = tk.Toplevel(self.root)
         result_window.title(title)
-        result_window.geometry("400x600")  
+        result_window.geometry("400x600")
 
         style = ttk.Style(result_window)
         style.configure("Treeview", font=("Helvetica", 12), rowheight=25)
@@ -326,7 +326,7 @@ class Recommender:
 
         # Insert data into the tree
         for movie in movies:
-            if isinstance(movie, Movie):  # Check if it's a Movie object 
+            if isinstance(movie, Movie):  # Check if it's a Movie object
                 movie_title = self.extract_title(movie)
                 tree.insert("", tk.END, values=(movie_title,))
             else:
