@@ -1,13 +1,40 @@
+"""Module Description
+==================
+This module implements a Tkinter-based graphical user interface (Welcome Screen, preference selection, results display) for PickMeWatchMe.
+It contains a Recommender class which
+
+For decision Tree-Based Recommendations:
+- Builds a binary decision tree from a CSV dataset.
+- Encodes user preferences and traverses the tree for relevant movie suggestions.
+
+For Actor-Based Search:
+- Loads a movie-actor graph from the dataset.
+- Retrieves movie recommendations based on a user-inputted actor.
+
+Copyright and Usage Information
+===============================
+
+This file is solely for the personal and private use of
+Victoria Cai, Isabella Zhong, Maya Dowman, Grace-Keyi Wang. All forms of
+distribution of this code, whether as given or with any changes, are
+expressly prohibited.
+
+This file is Copyright (c) 2025 Victoria Cai, Isabella Zhong, Maya Dowman, Grace-Keyi Wang
+"""
 import tkinter as tk
 from tkinter import ttk, messagebox
 import tkinter.font as tkfont
 from tree import MovieDecisionTree
+<<<<<<< HEAD
 from MovieActorGraph import load_movie_actor_graph
 from tree import BinaryCSV
+=======
+from movie_actor_graph import load_movie_actor_graph
+from tree import Binary_Csv
+>>>>>>> 11277959fa956fbf4fe7340915b9463002232f6f
 import csv
 import pickle
 from tree import Movie
-import base64
 
 def get_rec(tree: MovieDecisionTree, input: list) -> list:
     recommendations = tree.traverse_tree(input)
@@ -49,19 +76,23 @@ class Recommender:
         self.actor_frame = tk.Frame(root, bg="#002138")
         self.recommendation_frame = tk.Frame(root, bg="#002138")
 
-        # Initialize UI
-        self.create_welcome_screen()
-
         # Colour codes
         self.colour_dark = "#0F6BAE"
         self.colour_blue = "#83B8FF"
         self.colour_light = "#C6CDFF"
-    
-    def extract_title(self, movie:Movie):
+
+        # Initialize UI
+        self.create_welcome_screen()
+
+    def extract_title(self, movie:Movie) -> str:
+        """Extracts and returns the title from the given movie.
+        """
         return movie.title
-    
-    #encodes the user input into a binary list so that it can traversre through the list
-    def convert_user_input(self, input:tuple, file: str) -> list:
+
+    def convert_user_input(self, input: set, file: str) -> list:
+        """
+        Encodes the user input into a binary list so that it can traversre through the list.
+        """
         with open(file) as csv_file:
             reader = csv.reader(csv_file)
             rows = list(reader)
@@ -71,14 +102,14 @@ class Recommender:
             # starts at one because header[0] is the movie node
             header_index = 1
             while header_index < len(header):
-                if header[header_index] in input:  
+                if header[header_index] in input:
                     encoded.append(1)
                 else:
                     encoded.append(0)
                 header_index += 1
 
             return encoded
-    
+
     def create_welcome_screen(self):
         """
         Creates the welcome screen for PickMeWatchMe.
@@ -102,7 +133,11 @@ class Recommender:
         """
         Display the screen asking if the user has an actor/actress in mind.
         """
+        # Hide other frames
         self.welcome_frame.pack_forget()
+        self.recommendation_frame.pack_forget()
+
+        # Show actor frame
         self.actor_frame.pack(fill=tk.BOTH, expand=True, padx=50, pady=50)
 
         tk.Label(self.actor_frame, text="If you would like an Actor/Actress-only based search,\n"
@@ -142,8 +177,8 @@ class Recommender:
             if actor_name not in self.graph.get_vertices('actor'):
                 messagebox.showinfo("Sorry", f"{actor_name} is not in our Database")
                 return
-             
-            movies = self.graph.get_neighbours(actor_name)    
+
+            movies = self.graph.get_neighbours(actor_name)
             if movies:
                 self.show_movie_list(movies, f"Movies featuring {actor_name}")
             else:
@@ -157,6 +192,8 @@ class Recommender:
         Shows recommendations by using the tree.
         """
         self.actor_frame.pack_forget()
+        self.welcome_frame.pack_forget()
+
         self.recommendation_frame.pack(fill=tk.BOTH, expand=True, padx=50, pady=50)
 
         tk.Label(self.recommendation_frame,
@@ -283,7 +320,7 @@ class Recommender:
         # Create result window
         result_window = tk.Toplevel(self.root)
         result_window.title(title)
-        result_window.geometry("400x600")  
+        result_window.geometry("400x600")
 
         style = ttk.Style(result_window)
         style.configure("Treeview", font=("Helvetica", 12), rowheight=25)
@@ -300,7 +337,7 @@ class Recommender:
 
         # Insert data into the tree
         for movie in movies:
-            if isinstance(movie, Movie):  # Check if it's a Movie object 
+            if isinstance(movie, Movie):  # Check if it's a Movie object
                 movie_title = self.extract_title(movie)
                 tree.insert("", tk.END, values=(movie_title,))
             else:
@@ -321,3 +358,18 @@ class Recommender:
 
     # # test
     # print(self.convert_user_input({'runtime_bin_short', 'genre_Family'}, 'decision_tree.csv'))
+
+    if __name__ == '__main__':
+
+        import python_ta.contracts
+        import doctest
+
+        python_ta.contracts.check_all_contracts()
+
+        doctest.testmod(verbose='TRUE')
+
+        python_ta.check_all(config={
+            'extra-imports': ['tkinter', 'tkinter.font', 'tree', 'movie_actor_graph', 'tree', 'csv', 'pickle', 'tree'],  # the names (strs) of imported modules
+            'allowed-io': [build_decision_tree, convert_user_input],     # the names (strs) of functions that call print/open/input
+            'max-line-length': 120
+    })
