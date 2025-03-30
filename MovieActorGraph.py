@@ -92,6 +92,7 @@ class Graph:
 
         return {self._vertices[x].item for x in self._vertices if self._vertices[x].kind == kind}
 
+
 def load_movie_actor_graph(movie_file: str) -> Graph:
     """Return a graph corresponding to the given datasets.
 
@@ -138,17 +139,17 @@ if __name__ == '__main__':
     # However, we recommend commenting out these lines when working with the large
     # datasets, as checking representation invariants and preconditions greatly
     # increases the running time of the functions/methods.
-    #import python_ta.contracts
-    #python_ta.contracts.check_all_contracts()
+    # import python_ta.contracts
+    # python_ta.contracts.check_all_contracts()
 
     import doctest
-    
+
     doctest.testmod(verbose='TRUE')
-    
-    # import python_ta
-    
-    # python_ta.check_all(config={
-    #     'extra-imports': [],  # the names (strs) of imported modules
-    #     'allowed-io': [],     # the names (strs) of functions that call print/open/input
-    #     'max-line-length': 120
-    # })
+
+    import python_ta
+
+    python_ta.check_all(config={
+        'extra-imports': ['MovieData'],  # the names (strs) of imported modules
+        'allowed-io': [],     # the names (strs) of functions that call print/open/input
+        'max-line-length': 120
+    })
