@@ -188,13 +188,13 @@ class Recommender:
                          "Music", "Musical", "Mystery", "Romance", "Sci-Fi", "Support",
                          "Thriller", "War", "Western"]
 
-        self.genre_var = tk.StringVar(value=genre_options[0])
-        genre_dropdown = tk.OptionMenu(genre_frame, self.genre_var, *genre_options)
-        genre_dropdown.config(font=self.button_font, bg=self.colour_blue, fg="white",
-                               activebackground=self.colour_dark, activeforeground="white",
-                               highlightthickness=0)
-        genre_dropdown["menu"].config(font=self.button_font, bg=self.colour_light, fg=self.colour_dark)
-        genre_dropdown.pack(side=tk.LEFT)
+        # self.genre_var = tk.StringVar(value=genre_options[0])
+        # genre_dropdown = tk.OptionMenu(genre_frame, self.genre_var, *genre_options)
+        # genre_dropdown.config(font=self.button_font, bg=self.colour_blue, fg="white",
+        #                        activebackground=self.colour_dark, activeforeground="white",
+        #                        highlightthickness=0)
+        # genre_dropdown["menu"].config(font=self.button_font, bg=self.colour_light, fg=self.colour_dark)
+        # genre_dropdown.pack(side=tk.LEFT)
         #  listbox to allow multiple selections
         self.genre_listbox = tk.Listbox(genre_frame, selectmode="multiple",
                                         font=self.button_font, bg=self.colour_light,
