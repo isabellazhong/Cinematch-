@@ -11,7 +11,7 @@ style = ttk.Style()
 style.theme_use('clam')
 style.configure('Dark.TFrame', background='#2A2A2A')
 style.configure('Accent.TButton', font=('Arial', 14),
-                foreground='white', background='#4ECDC4')
+                foreground='white', background='#4ECDC4') 
 style.configure('Secondary.TButton', font=('Arial', 14),
                 foreground='white', background='#FF6B6B')
 

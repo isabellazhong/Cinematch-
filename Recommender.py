@@ -47,7 +47,6 @@ class Recommender:
         # Create frames
         self.welcome_frame = tk.Frame(root, bg="#002138")
         self.actor_frame = tk.Frame(root, bg="#002138")
-        self.recommendation_frame = tk.Frame(root, bg="#002138")
 
         # Initialize UI
         self.create_welcome_screen()
@@ -157,6 +156,7 @@ class Recommender:
         Shows recommendations by using the tree.
         """
         self.actor_frame.pack_forget()
+        self.recommendation_frame = tk.Frame(self.root, bg="#002138")
         self.recommendation_frame.pack(fill=tk.BOTH, expand=True, padx=50, pady=50)
 
         tk.Label(self.recommendation_frame,
