@@ -16,39 +16,6 @@ style.configure('Accent.TButton', font=('Arial', 14),
 style.configure('Secondary.TButton', font=('Arial', 14),
                 foreground='white', background='#FF6B6B')
 
-def build_decision_tree(file:str) -> MovieDecisionTree:
-    tree = MovieDecisionTree('', [])
-    with open(file) as csv_file:
-        reader = csv.reader(csv_file)
-        next(reader)
-        for row in reader:
-            movie = row[0]
-            movie_list = row[1:] + [movie]
-            tree.create_branch(movie_list)
-    return tree
-
-#encodes the user input into a binary list so that it can traversre through the list
-def convert_user_input(input:set, file: str) -> list:
-    with open(file) as csv_file:
-        reader = csv.reader(csv_file)
-        rows = list(reader)
-        header = rows[0]
-
-        encoded = []
-        # starts at one because header[0] is the movie node
-        header_index = 1
-        while header_index < len(header):
-            if header[header_index] in input:  
-                encoded.append(1)
-            else:
-                encoded.append(0)
-            header_index += 1
-
-        return encoded
-
-def get_rec(tree: MovieDecisionTree, input: list) -> list:
-    recommendations = tree.traverse_tree(input)
-    return recommendations
 
 
 
@@ -75,17 +42,9 @@ if __name__ == "__main__":
 #     #     'max-nested-blocks': 4
 #     # })
     Binary_Csv('imdb_top_1000.csv', 'decision_tree.csv').create_decision_csv()
-    t = build_decision_tree('decision_tree.csv')
+    
 
     # root1 = tk.Tk()
     # app = Recommender(root1)
     # root1.mainloop()
 
-    #test getting rec
-    # print(t)
-    x = convert_user_input({'runtime_bin_mid', 'genre_Comedy', 'genre_Crime', 'genre_Drama'}, 'decision_tree.csv')
-    rec = get_rec(t, x)
-    y = eval(rec[0])
-    print(pickle.loads(y).title)
-    # test
-    
