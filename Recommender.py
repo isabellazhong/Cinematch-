@@ -1,6 +1,6 @@
 """Module Description
 ==================
-This module implements a Tkinter-based graphical user interface (Welcome Screen, preference selection, 
+This module implements a Tkinter-based graphical user interface (Welcome Screen, preference selection,
 results display) for PickMeWatchMe.
 
 It contains a Recommender class and get_rec and build_decision_tree functions.
@@ -23,23 +23,29 @@ expressly prohibited.
 
 This file is Copyright (c) 2025 Victoria Cai, Isabella Zhong, Maya Dowman, Grace-Keyi Wang
 """
+
+from typing import Any
 import csv
 import pickle
 import tkinter as tk
 from tkinter import ttk, messagebox
 import tkinter.font as tkfont
-from tree import MovieDecisionTree
+from tree import MovieDecisionTree, BinaryCSV, Movie
 from movie_actor_graph import Graph, load_movie_actor_graph
-from tree import BinaryCSV
-from tree import Movie
-from typing import Any
+
 
 def get_rec(tree: MovieDecisionTree, _input: list) -> list:
+    """
+    return the recommended films by traversing the given tree
+    """
     recommendations = tree.traverse_tree(_input)
     return recommendations
 
 
-def build_decision_tree(file:str) -> MovieDecisionTree: 
+def build_decision_tree(file: str) -> MovieDecisionTree:
+    """
+    build the decision tree using the given file and returns a MovieDecisionTree object
+    """
     tree = MovieDecisionTree('', [])
     with open(file) as csv_file:
         reader = csv.reader(csv_file)
@@ -70,9 +76,7 @@ class Recommender:
     length_var: tk.StringVar
     genre_listbox: tk.Listbox
 
-
-
-    def __init__(self, root: Any):
+    def __init__(self, root: Any) -> None:
         # Initialize the main window and main variables
         self.root = root
         self.root.title("PickMeWatchMe")
@@ -105,7 +109,7 @@ class Recommender:
         self.length_var = None
         self.genre_listbox = None
 
-    def extract_title(self, movie: Movie) -> str: 
+    def extract_title(self, movie: Movie) -> str:
         """Extract and return the title from the given movie.
         """
         return movie.title
@@ -161,7 +165,8 @@ class Recommender:
         # Show actor frame
         self.actor_frame.pack(fill=tk.BOTH, expand=True, padx=50, pady=50)
 
-        tk.Label(self.actor_frame, text="If you would like an Actor/Actress-only based search,\nEnter the actor/actress you would like to watch:",
+        tk.Label(self.actor_frame, text="If you would like an Actor/Actress-only based search,\nEnter the actor/actress"
+                                        "you would like to watch:",
                  font=("Helvetica", 16), fg="white", bg="#002138").pack(pady=20)
 
         self.actor_entry = tk.Entry(self.actor_frame, width=30, font=self.button_font,
@@ -227,7 +232,7 @@ class Recommender:
         tk.Label(length_frame, text="Runtime:",
                  font=self.button_font, fg="white", bg="#002138").pack(side=tk.LEFT, padx=10)
 
-        length_options = ["0-60 minutes", "60-90 minutes", "90-120 minutes", 
+        length_options = ["0-60 minutes", "60-90 minutes", "90-120 minutes",
                           "120-180 minutes", "180-240 minutes", "240+ minutes"]
         self.length_var = tk.StringVar(value=length_options[0])
         length_dropdown = tk.OptionMenu(length_frame, self.length_var, *length_options)
@@ -331,7 +336,7 @@ class Recommender:
         elif recommended_movies:
             self.show_movie_list(recommended_movies, "Movie Recommendations")
 
-    def show_movie_list(self, movies: list, title) -> None:
+    def show_movie_list(self, movies: list, title: str) -> None:
         """
         Show the list of movie recommendations in a window.
         Display only movie titles since the vertices are just movie titles.
@@ -368,14 +373,6 @@ class Recommender:
         tree.configure(yscrollcommand=scrollbar.set)
         scrollbar.pack(side="right", fill="y")
 
-    # #test getting rec
-    # t = build_decision_tree('decision_tree.csv')
-    # print(t)
-    # rec = get_rec(t, [0,0,1,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0])
-    # print(rec)
-
-    # # test
-    # print(self.convert_user_input({'runtime_bin_short', 'genre_Family'}, 'decision_tree.csv'))
 
 if __name__ == '__main__':
 
@@ -388,7 +385,7 @@ if __name__ == '__main__':
 
     python_ta.check_all(config={
         'extra-imports': ['tkinter', 'tkinter.font', 'tree', '__future__',
-                          'movie_actor_graph', 'tree', 'csv', 'pickle', 'tree'],  # the names (strs) of imported modules
-        'allowed-io': [build_decision_tree, Recommender], # the names (strs) of functions that call print/open/input
+                          'movie_actor_graph', 'tree', 'csv', 'pickle', 'tree', 'ast'],
+        'allowed-io': ['build_decision_tree', 'load_movie_data', 'encode_user_input', 'convert_user_input'],
         'max-line-length': 120
-})
+    })
