@@ -19,49 +19,10 @@ This file is Copyright (c) 2025 Victoria Cai, Isabella Zhong, Maya Dowman, Grace
 """
 import tkinter as tk
 from tkinter import ttk
-<<<<<<< HEAD
-import csv
-from tree import MovieDecisionTree
-from tree import BinaryCSV
 from Recommender import Recommender
 
 
-# Configure styles
-style = ttk.Style()
-style.theme_use('clam')
-style.configure('Dark.TFrame', background='#2A2A2A')
-style.configure('Accent.TButton', font=('Arial', 14),
-                foreground='white', background='#4ECDC4')
-style.configure('Secondary.TButton', font=('Arial', 14),
-                foreground='white', background='#FF6B6B')
-=======
-from recommender import Recommender
->>>>>>> 11277959fa956fbf4fe7340915b9463002232f6f
-
-
 if __name__ == "__main__":
-
-<<<<<<< HEAD
-#     # import doctest
-#     #
-#     # doctest.testmod()
-#     #
-#     # import python_ta
-#     #
-#     # python_ta.check_all(config={
-#     #     'max-line-length': 120,
-#     #     'disable': ['E1136'],
-#     #     'extra-imports': ['csv', 'networkx'],
-#     #     'allowed-io': ['load_movie_actor_graph'],
-#     #     'max-nested-blocks': 4
-#     # })
-    BinaryCSV('imdb_top_1000.csv', 'decision_tree.csv').create_decision_csv()
-    
-=======
-    import python_ta.contracts
-    python_ta.contracts.check_all_contracts()
->>>>>>> 11277959fa956fbf4fe7340915b9463002232f6f
-
     import python_ta
     python_ta.check_all(config={
         'max-line-length': 120,
