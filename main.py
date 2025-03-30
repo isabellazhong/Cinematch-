@@ -25,35 +25,27 @@ from tree import Binary_Csv
 from recommender import Recommender
 
 
-# Configure styles
-style = ttk.Style()
-style.theme_use('clam')
-style.configure('Dark.TFrame', background='#2A2A2A')
-style.configure('Accent.TButton', font=('Arial', 14),
-                foreground='white', background='#4ECDC4') 
-style.configure('Secondary.TButton', font=('Arial', 14),
-                foreground='white', background='#FF6B6B')
-
-
 if __name__ == "__main__":
 
     import python_ta.contracts
     python_ta.contracts.check_all_contracts()
 
-    import doctest
-    
-    doctest.testmod()
-    
     import python_ta
-    
     python_ta.check_all(config={
         'max-line-length': 120,
         'extra-imports': ['tkinter', 'tree', 'recommender'],
         'max-nested-blocks': 4
     })
 
+    # Configure styles
+    style = ttk.Style()
+    style.theme_use('clam')
+    style.configure('Dark.TFrame', background='#2A2A2A')
+    style.configure('Accent.TButton', font=('Arial', 14), foreground='white', background='#4ECDC4')
+    style.configure('Secondary.TButton', font=('Arial', 14), foreground='white', background='#FF6B6B')
+    # Create decision tree
     Binary_Csv('imdb_top_1000.csv', 'decision_tree.csv').create_decision_csv()
-    
+    # Initialize and run recommender
     root1 = tk.Tk()
     app = Recommender(root1)
     root1.mainloop()
