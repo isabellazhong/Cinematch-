@@ -1,4 +1,20 @@
-"""A class for movie data."""
+"""CSC111 Winter 2025 Exercise 4: More Graphs and Recommendations (Part 1)
+
+Module Description
+==================
+This module contains the Graph and _Vertex classes from lecture, and the functions
+you'll complete for Part 1 of this exercise.
+
+Copyright and Usage Information
+===============================
+
+This file is solely for the personal and private use of 
+Victoria Cai, Isabella Zhong, Maya Dowman, Grace-Keyi Wang. All forms of
+distribution of this code, whether as given or with any changes, are
+expressly prohibited.
+
+This file is Copyright (c) 2025 Victoria Cai, Isabella Zhong, Maya Dowman, Grace-Keyi Wang
+"""
 import csv
 
 
@@ -49,3 +65,18 @@ class MovieData:
                 overview_rating = (row["Overview"], row["IMDB_Rating"])
                 movies[row["Series_Title"]] = MovieData(poster_title, genre_runtime, cast_director, overview_rating)
         return movies
+
+if __name__ == '__main__':
+
+    import python_ta.contracts
+    import doctest
+
+    python_ta.contracts.check_all_contracts()
+
+    doctest.testmod(verbose='TRUE')
+
+    python_ta.check_all(config={
+        'extra-imports': ['csv'],  # the names (strs) of imported modules
+        'allowed-io': [],     # the names (strs) of functions that call print/open/input
+        'max-line-length': 120
+    })

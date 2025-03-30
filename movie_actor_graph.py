@@ -1,12 +1,28 @@
+"""
+Module Description
+==================
+This module contains the Graph and _Vertex classes, as well as load_movie_actor_graph function, which creates the
+graph containing movies and actors.
+
+Copyright and Usage Information
+===============================
+
+This file is solely for the personal and private use of 
+Victoria Cai, Isabella Zhong, Maya Dowman, Grace-Keyi Wang. All forms of
+distribution of this code, whether as given or with any changes, are
+expressly prohibited.
+
+This file is Copyright (c) 2025 Victoria Cai, Isabella Zhong, Maya Dowman, Grace-Keyi Wang
+"""
 from __future__ import annotations
 from typing import Any
-from MovieData import MovieData
+from movie_data import MovieData
 
 
 class _Vertex:
     """A vertex in an Actor-Movie graph, used to represent an actor or a movie.
 
-    Each vertex item is either an FULL NAME or a movie title, represented as strings.
+    Each vertex item is either a FULL NAME or a movie title, represented as strings.
 
     Instance Attributes:
         - item: The data stored in this vertex, representing an actor or a movie.
@@ -23,9 +39,7 @@ class _Vertex:
     neighbours: set[_Vertex]
 
     def __init__(self, item: str, kind: str) -> None:
-        """Initialize a new vertex with the given item and kind.
-
-        This vertex is initialized with no neighbours.
+        """Initialize a new vertex with the given item and kind, with no neighbours.
 
         Preconditions:
             - kind in {'movie', 'actor'}
@@ -36,8 +50,7 @@ class _Vertex:
 
 
 class Graph:
-    """A graph used to represent actors and the movies they've been in.
-    """
+    """A graph used to represent actors and the movies they've been in."""
     # Private Instance Attributes:
     #     - _vertices:
     #         A collection of the vertices contained in this graph.
@@ -45,7 +58,7 @@ class Graph:
     _vertices: dict[Any, _Vertex]
 
     def __init__(self) -> None:
-        """Initialize an empty graph (no vertices or edges)."""
+        """Initialize an empty graph."""
         self._vertices = {}
 
     def add_vertex(self, item: str, kind: str) -> None:
@@ -77,8 +90,6 @@ class Graph:
     def get_neighbours(self, item: str) -> set:
         """Return a set of the neighbours of the given item.
 
-        Note that the *items* are returned, not the _Vertex objects themselves.
-
         Raise a ValueError if item does not appear as a vertex in this graph.
         """
         if item in self._vertices:
@@ -96,12 +107,11 @@ class Graph:
 def load_movie_actor_graph(movie_file: str) -> Graph:
     """Return a graph corresponding to the given datasets.
 
-    The book review graph stores all the information from the movie_file as follows:
     Create one vertex for each actor and one vertex for each movie.
     Edges represent an actor being in a movie.
 
-    The vertices of the 'actor' kind should have the 'actor's FULL NAME' as its item.
-    The vertices of the 'movie' kind representing each movie should have the movie TITLE as its item.
+    The vertices of the 'actor' kind have the 'actor's FULL NAME' as its item.
+    The vertices of the 'movie' kind have the movie TITLE as its item.
 
     Preconditions:
         - movie_file is the path to a CSV file corresponding to the movie data
@@ -135,21 +145,16 @@ def load_movie_actor_graph(movie_file: str) -> Graph:
 
 
 if __name__ == '__main__':
-    # You can uncomment the following lines for code checking/debugging purposes.
-    # However, we recommend commenting out these lines when working with the large
-    # datasets, as checking representation invariants and preconditions greatly
-    # increases the running time of the functions/methods.
-    # import python_ta.contracts
-    # python_ta.contracts.check_all_contracts()
 
+    import python_ta.contracts
     import doctest
+
+    python_ta.contracts.check_all_contracts()
 
     doctest.testmod(verbose='TRUE')
 
-    import python_ta
-
     python_ta.check_all(config={
-        'extra-imports': ['MovieData'],  # the names (strs) of imported modules
+        'extra-imports': ['__future__', 'movie_data', 'typing'],  # the names (strs) of imported modules
         'allowed-io': [],     # the names (strs) of functions that call print/open/input
         'max-line-length': 120
     })

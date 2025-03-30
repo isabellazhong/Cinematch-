@@ -1,13 +1,29 @@
+"""CSC111 Winter 2025 Exercise 4: More Graphs and Recommendations (Part 1)
+
+Module Description
+==================
+This module contains the Graph and _Vertex classes from lecture, and the functions
+you'll complete for Part 1 of this exercise.
+
+Copyright and Usage Information
+===============================
+
+This file is solely for the personal and private use of 
+Victoria Cai, Isabella Zhong, Maya Dowman, Grace-Keyi Wang. All forms of
+distribution of this code, whether as given or with any changes, are
+expressly prohibited.
+
+This file is Copyright (c) 2025 Victoria Cai, Isabella Zhong, Maya Dowman, Grace-Keyi Wang
+"""
 import tkinter as tk
 from tkinter import ttk, messagebox
 import tkinter.font as tkfont
 from tree import MovieDecisionTree
-from MovieActorGraph import load_movie_actor_graph
+from movie_actor_graph import load_movie_actor_graph
 from tree import Binary_Csv
 import csv
 import pickle
 from tree import Movie
-import base64
 
 def get_rec(tree: MovieDecisionTree, input: list) -> list:
     recommendations = tree.traverse_tree(input)

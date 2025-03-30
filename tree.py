@@ -1,11 +1,23 @@
-import csv
+"""CSC111 Winter 2025 Exercise 4: More Graphs and Recommendations (Part 1)
+
+Module Description
+==================
+This module contains the Graph and _Vertex classes from lecture, and the functions
+you'll complete for Part 1 of this exercise.
+
+Copyright and Usage Information
+===============================
+
+This file is solely for the personal and private use of 
+Victoria Cai, Isabella Zhong, Maya Dowman, Grace-Keyi Wang. All forms of
+distribution of this code, whether as given or with any changes, are
+expressly prohibited.
+
+This file is Copyright (c) 2025 Victoria Cai, Isabella Zhong, Maya Dowman, Grace-Keyi Wang
+"""
 import pandas as pd
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.model_selection import train_test_split
-from sklearn import tree
-from sklearn.preprocessing import OneHotEncoder
 import numpy as np
-from MovieData import MovieData
+from movie_data import MovieData
 from typing import Any, Optional
 import pickle 
 
@@ -197,25 +209,33 @@ class MovieDecisionTree:
     
     #TODO figure out later
     #returns all movies that have the same input up to a specific depth of a tree
-    def movie_up_to_depth(self, input: list, depth_index: int):
-        MAX_DEPTH = 27
-        if depth_index > MAX_DEPTH:
-            return []
+    # def movie_up_to_depth(self, input: list, depth_index: int):
+    #     MAX_DEPTH = 27
+    #     if depth_index > MAX_DEPTH:
+    #         return []
         
-        # Traverse the tree up to the specific depth
-        trees = self.traverse_tree(input[:depth_index])
-        movies = [] 
-        if len(trees) > 1:
-            for tree in trees:
-                movies.extend(tree.get_movies())
-        else:
-            movies = tree.get_movies()
+    #     # Traverse the tree up to the specific depth
+    #     trees = self.traverse_tree(input[:depth_index])
+    #     movies = [] 
+    #     if len(trees) > 1:
+    #         for tree in trees:
+    #             movies.extend(tree.get_movies())
+    #     else:
+    #         movies = tree.get_movies()
         
-        return movies
+    #     return movies
 
+if __name__ == '__main__':
 
+    import python_ta.contracts
+    import doctest
 
-# y = Binary_Csv('movie_data_small.csv', 'decision_tree.csv')
-# # print(y.transform_movie_data('movie_data_small.csv'))
-# y.create_decision_csv()
+    python_ta.contracts.check_all_contracts()
 
+    doctest.testmod(verbose='TRUE')
+
+    python_ta.check_all(config={
+        'extra-imports': ['pandas', 'numpy', 'movie_data', 'typing', 'pickle'],  # the names (strs) of imported modules
+        'allowed-io': [],     # the names (strs) of functions that call print/open/input
+        'max-line-length': 120
+    })
