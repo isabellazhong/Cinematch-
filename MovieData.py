@@ -1,6 +1,7 @@
 """A class for movie data."""
 import csv
 
+
 class MovieData:
     """Data object representing movie data
 

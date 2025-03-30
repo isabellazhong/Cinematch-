@@ -122,8 +122,8 @@ class MovieDecisionTree:
     def get_subtrees(self):
         return self._subtrees
 
-    #traverses the tree with user_input
-    def traverse_tree(self, inputs: list):
+    #traverses the tree with user_input, returns not found if the branch doesn't exist
+    def traverse_tree(self, inputs: list) -> Optional[str]:
         
         if self.is_empty():
             return []
@@ -136,7 +136,7 @@ class MovieDecisionTree:
             for subtree in self._subtrees:
                 if subtree.get_root() == str(inputs[0]):
                     return subtree.traverse_tree(inputs[1:])
-        raise KeyError
+        return "Not Found"
       
     
      #creates a branch for the tree
