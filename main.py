@@ -310,7 +310,6 @@ def get_rec(tree: MovieDecisionTree, input: list) -> list:
 #test getting rec
 Binary_Csv('imdb_top_1000.csv', 'decision_tree.csv').create_decision_csv()
 t = build_decision_tree('decision_tree.csv')
-print(t)
 rec = get_rec(t, [0,0,1,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0])
 print(rec)
 
