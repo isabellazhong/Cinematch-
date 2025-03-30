@@ -54,6 +54,11 @@ class MovieData:
         """
         class method to load in the basic information of the movie. Returns a dictionary mapping the movie title
         to the MovieData object of the specific movie.
+
+        >>> movies = MovieData.load_movie_basics("imdb_top_1000.csv")
+        >>> print(len(movies))
+        999
+
         """
         movies = {}
         with open(filename, 'r', encoding='latin-1') as f:
