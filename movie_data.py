@@ -52,8 +52,8 @@ class MovieData:
     @classmethod
     def load_movie_basics(cls, filename: str) -> dict:
         """
-        class method to load in the basic information of the movie. Returns a dictionary mapping the unique movie id
-        identifier to the MovieData object of the specific movie.
+        class method to load in the basic information of the movie. Returns a dictionary mapping the movie title
+        to the MovieData object of the specific movie.
         """
         movies = {}
         with open(filename, 'r', encoding='latin-1') as f:
