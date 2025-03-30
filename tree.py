@@ -2,8 +2,17 @@
 
 Module Description
 ==================
-This module contains the Graph and _Vertex classes from lecture, and the functions
-you'll complete for Part 1 of this exercise.
+This module implements the decision tree to reccomend a movie for the user. 
+
+For Movie class:
+- Creates a node for the movie (the leaves of the tree)
+
+For the BinaryCSV:
+- Transforms the orginal mvoie dataset into a binary one so that the tree can be traversed through
+- Uses one-hot encoding to transform the categories
+
+For MovieDecisionTree:
+- Includes methods to create the tree and to traverse through 
 
 Copyright and Usage Information
 ===============================
