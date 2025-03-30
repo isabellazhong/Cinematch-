@@ -1,9 +1,15 @@
-"""CSC111 Winter 2025 Exercise 4: More Graphs and Recommendations (Part 1)
-
-Module Description
+"""Module Description
 ==================
-This module contains the Graph and _Vertex classes from lecture, and the functions
-you'll complete for Part 1 of this exercise.
+This module implements a Tkinter-based graphical user interface (Welcome Screen, preference selection, results display) for PickMeWatchMe.
+It contains a Recommender class which
+
+For decision Tree-Based Recommendations:
+- Builds a binary decision tree from a CSV dataset.
+- Encodes user preferences and traverses the tree for relevant movie suggestions.
+
+For Actor-Based Search:
+- Loads a movie-actor graph from the dataset.
+- Retrieves movie recommendations based on a user-inputted actor.
 
 Copyright and Usage Information
 ===============================
@@ -347,3 +353,18 @@ class Recommender:
 
     # # test
     # print(self.convert_user_input({'runtime_bin_short', 'genre_Family'}, 'decision_tree.csv'))
+
+    if __name__ == '__main__':
+
+        import python_ta.contracts
+        import doctest
+
+        python_ta.contracts.check_all_contracts()
+
+        doctest.testmod(verbose='TRUE')
+
+        python_ta.check_all(config={
+            'extra-imports': ['tkinter', 'tkinter.font', 'tree', 'movie_actor_graph', 'tree', 'csv', 'pickle', 'tree'],  # the names (strs) of imported modules
+            'allowed-io': [build_decision_tree, convert_user_input],     # the names (strs) of functions that call print/open/input
+            'max-line-length': 120
+    })
