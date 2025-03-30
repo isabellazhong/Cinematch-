@@ -39,9 +39,6 @@ if __name__ == "__main__":
 #     # })
     Binary_Csv('imdb_top_1000.csv', 'decision_tree.csv').create_decision_csv()
     
-
-
-    
     root1 = tk.Tk()
     app = Recommender(root1)
     root1.mainloop()

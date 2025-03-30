@@ -47,20 +47,25 @@ class Recommender:
         # Create frames
         self.welcome_frame = tk.Frame(root, bg="#002138")
         self.actor_frame = tk.Frame(root, bg="#002138")
-
-        # Initialize UI
-        self.create_welcome_screen()
+        self.recommendation_frame = tk.Frame(root, bg="#002138")
 
         # Colour codes
         self.colour_dark = "#0F6BAE"
         self.colour_blue = "#83B8FF"
         self.colour_light = "#C6CDFF"
+
+        # Initialize UI
+        self.create_welcome_screen()
     
-    def extract_title(self, movie:Movie):
+    def extract_title(self, movie:Movie) -> str:
+        """Extracts and returns the title from the given movie.
+        """
         return movie.title
     
-    #encodes the user input into a binary list so that it can traversre through the list
     def convert_user_input(self, input:tuple, file: str) -> list:
+        """
+        Encodes the user input into a binary list so that it can traversre through the list.
+        """
         with open(file) as csv_file:
             reader = csv.reader(csv_file)
             rows = list(reader)
@@ -101,7 +106,11 @@ class Recommender:
         """
         Display the screen asking if the user has an actor/actress in mind.
         """
+        # Hide other frames
         self.welcome_frame.pack_forget()
+        self.recommendation_frame.pack_forget()
+
+        # Show actor frame
         self.actor_frame.pack(fill=tk.BOTH, expand=True, padx=50, pady=50)
 
         tk.Label(self.actor_frame, text="If you would like an Actor/Actress-only based search,\n"
@@ -156,7 +165,8 @@ class Recommender:
         Shows recommendations by using the tree.
         """
         self.actor_frame.pack_forget()
-        self.recommendation_frame = tk.Frame(self.root, bg="#002138")
+        self.welcome_frame.pack_forget()
+
         self.recommendation_frame.pack(fill=tk.BOTH, expand=True, padx=50, pady=50)
 
         tk.Label(self.recommendation_frame,
