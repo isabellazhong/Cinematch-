@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 import csv
 from tree import MovieDecisionTree
-from tree import Binary_Csv
+from tree import BinaryCSV
 from Recommender import Recommender
 
 
@@ -37,7 +37,7 @@ if __name__ == "__main__":
 #     #     'allowed-io': ['load_movie_actor_graph'],
 #     #     'max-nested-blocks': 4
 #     # })
-    Binary_Csv('imdb_top_1000.csv', 'decision_tree.csv').create_decision_csv()
+    BinaryCSV('imdb_top_1000.csv', 'decision_tree.csv').create_decision_csv()
     
 
 

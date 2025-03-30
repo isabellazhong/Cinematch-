@@ -1,13 +1,11 @@
-import csv
+"""Modules to import"""
+from __future__ import annotations
+from typing import Any, Optional
+import pickle
 import pandas as pd
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.model_selection import train_test_split
-from sklearn import tree
-from sklearn.preprocessing import OneHotEncoder
 import numpy as np
 from MovieData import MovieData
-from typing import Any, Optional
-import pickle 
+
 
 class Movie:
 
@@ -15,55 +13,66 @@ class Movie:
         decision tree when choosing a movie to watch for the user
 
         Instance Attributes:
-            - title: the title of the movie
-            - genre: the genre of the novie
-            - duration: how long the movie is in minutes
-            - rating: the rotton tomatoes the movie has
+            - self.title: the title of the movie
+            - self.genre: the genre of the novie
+            - self.duration: how long the movie is in minutes
+            - self.rating: the rotton tomatoes the movie has
     """
 
     title: str
     link: str
-    genre: str
     duration: float
-    rating: int
+    rating: float
 
-    def __init__(self, title, link, genre, duration, rating):
+    def __init__(self, title: str, link: str, duration: float, rating: float) -> None:
         self.title = title
         self.link = link
-        self.genre = genre
         self.duration = duration
         self.rating = rating
 
 
-class Binary_Csv:
+class BinaryCSV:
+    """
+        Turns the data in the movie csv into a hot-encoded one (binary data) 
+
+        Instance Attributes:
+            - self.movie_file: the movie csv file 
+            - self.decision_file: csv file to put the binary data in 
+        
+    """
     movie_file: str
     decision_file: str
 
-
-    def __init__(self, m_file, d_file):
+    def __init__(self, m_file: str, d_file: str) -> None:
+        """
+            initializes the binary_csv instance attributes
+        """
         self.movie_file = m_file
         self.decision_file = d_file
 
-
-    # hot one encodes data of a specific column
-    def encode(self, key: str, df: pd.DataFrame):
+    def encode(self, key: str, df: pd.DataFrame) -> pd.DataFrame:
+        """
+           hot one encodes data of a specific column
+        """
         df_explode = df.explode(key)
         df_onehot = pd.get_dummies(df_explode, columns=[key], dtype=int)
         return df_onehot
 
-
-    #uses one hot encoder to convert to numerical data
-    def transform_movie_data(self):
+    def get_data(self) -> list:
+        """
+            processes the data in the movie csv file and returns it as a list
+        """
         movies = MovieData.load_movie_basics(self.movie_file)
-        data = []
-        MOVIE_OBJECT_INDEX = 1
+        movie_object_index = 1
 
+        data = []
         for movie in movies.items():
-            movie_data = movie[MOVIE_OBJECT_INDEX]
+            movie_data = movie[movie_object_index]
             poster_link, series_title = movie_data.poster_title
             genres, runtime = movie_data.genre_runtime
             overview, imdb_rating = movie_data.overview_rating
 
+            # data for the dataframe
             data.append({
                 "title": series_title,
                 "poster": poster_link,
@@ -71,13 +80,18 @@ class Binary_Csv:
                 "runtime": runtime,
                 "overview": overview,
                 "imdb_rating": float(imdb_rating) if imdb_rating else np.nan,
-                "movie_node": pickle.dumps(Movie(series_title, poster_link, genres, runtime, imdb_rating))
+                # serialize the movie node so that it can be formmated in the csv as a string
+                "movie_node": pickle.dumps(Movie(series_title, poster_link, runtime, imdb_rating))
             })
+        return data
 
-
+    def transform_movie_data(self) -> pd.DataFrame:
+        """
+            uses one hot encoder to convert to numerical data, returns data frame
+        """
         # #adjusts data type
-        df = pd.DataFrame(data)
-        df['runtime'] =  df['runtime'].str.extract(r'(\d+)').astype(float)
+        df = pd.DataFrame(self.get_data())
+        df['runtime'] = df['runtime'].str.extract(r'(\d+)').astype(float)
         df['genre'] = df['genre'].str.split(', ')
 
         runtime_intervals = [0, 60, 90, 120, 180, 240, np.inf]
@@ -89,12 +103,14 @@ class Binary_Csv:
         df_final = df_final.groupby('title', as_index=False).max()
         return df_final
 
-    #creates a csv of a pathway for each movie that the tree can pass through
-    def create_decision_csv(self):
+    def create_decision_csv(self) -> None:
+        """
+            creates a csv of a pathway for each movie that the tree can pass through
+        """
         df = self.transform_movie_data()
         genre_columns = [col for col in df.columns if col.startswith('genre_')]
         runtime_columns = [col for col in df.columns if col.startswith('runtime_bin_')]
-        df = df[['movie_node'] +  runtime_columns + genre_columns]
+        df = df[['movie_node'] + runtime_columns + genre_columns]
         df.to_csv(self.decision_file, encoding='utf-8', index=False)
 
 
@@ -102,44 +118,62 @@ class MovieDecisionTree:
 
     """This class is a decision tree to filter out
         movies for the user to watch
+
+        Instance attributes:
+            - self._root: the root of the decision tree
+            - self._subtrees: the subtrees of the tree 
     """
     _root: Optional[Any]
     _subtrees: list[Any]
 
-    def __init__(self, root: Optional[Any], subtrees: list[Any]):
+    def __init__(self, root: Optional[Any], subtrees: list[Any]) -> None:
+        """
+            initializes the moviedecisiontree instance attributes
+        """
         self._root = root
         self._subtrees = subtrees
 
-    def is_empty(self):
+    def is_empty(self) -> bool:
+        """
+            checks if tree empty
+        """
         return self._root is None
 
-    def get_root(self):
+    def get_root(self) -> Any:
+        """
+            gets the root of the tree
+        """
         return self._root
 
-    def get_subtrees(self):
+    def get_subtrees(self) -> list:
+        """
+            gets the subtrees of the tree
+        """
         return self._subtrees
 
-    #traverses the tree with user_input, returns not found if the branch doesn't exist
-    def traverse_tree(self, inputs: list) -> Optional[str]:
-        
+    def traverse_tree(self, inputs: list) -> Any:
+        """
+            traverses the tree with user_input, returns not found if the branch doesn't exist
+        """
         if self.is_empty():
             return []
         elif not inputs:
             if not self._subtrees:
                 return []
             else:
-                return [subtree._root for subtree in self._subtrees]
+                return [s._root for s in self._subtrees]
         else:
             for subtree in self._subtrees:
                 if subtree.get_root() == str(inputs[0]):
                     return subtree.traverse_tree(inputs[1:])
         return "Not Found"
-      
-    
-     #creates a branch for the tree
-    def create_branch(self, lst: list):
+
+    def create_branch(self, lst: list) -> None:
+        """
+            Creates a branch for the tree
+        """
         if not lst:
-            return 
+            return None
         else:
             for subtree in self._subtrees:
                 if lst[0] == subtree.get_root():
@@ -150,72 +184,75 @@ class MovieDecisionTree:
             self._subtrees.append(new_tree)
             new_tree.create_branch(lst[1:])
 
-    #goes to leftmost branch
-    def go_left_most(self):
+    def go_left_most(self) -> Movie:
+        """
+            Goes to leftmost branch
+        """
         if self._root is None:
-            return
+            return None
         elif not self._subtrees:
             return self._root
         else:
             left = self._subtrees[0]
             return left.go_left_most()
 
-    #goes to right most branch
-    def go_right_most(self):
+    def go_right_most(self) -> Movie:
+        """
+            goes to right most branch
+        """
         if self._root is None:
-            return
+            return None
         elif not self._subtrees:
             return self._root
         else:
             left = self._subtrees[-1]
             return left.go_right_most()
-        
-    def get_movies(self):
+
+    def get_movies(self) -> list[Movie]:
+        """
+            returns list of ALL movies at a subtree in the main tree
+        """
         movies = []
 
         if not self.get_root() or not self.get_subtrees():
-            return []  # No further traversal possible
-        
-        seen_movies = set()  # To track unique movies and prevent duplicates
-        
-        # Traverse subtrees and get rightmost and leftmost nodes
+            return []
+        seen_movies = set()
+
         for subtree in self.get_subtrees():
-            right = subtree.go_right_most()  # Make sure this returns the rightmost movie
-            left = subtree.go_left_most()    # Make sure this returns the leftmost movie
-            
-            # Add right movie if it is unique
+            right = subtree.go_right_most()
+            left = subtree.go_left_most()
+
             if right is not None and right not in seen_movies:
                 movies.append(right)
                 seen_movies.add(right)
-            
-            # Add left movie if it is unique
+
             if left is not None and left not in seen_movies:
                 movies.append(left)
                 seen_movies.add(left)
-        
-        return movies
-    
-    #TODO figure out later
-    #returns all movies that have the same input up to a specific depth of a tree
-    def movie_up_to_depth(self, input: list, depth_index: int):
-        MAX_DEPTH = 27
-        if depth_index > MAX_DEPTH:
-            return []
-        
-        # Traverse the tree up to the specific depth
-        trees = self.traverse_tree(input[:depth_index])
-        movies = [] 
-        if len(trees) > 1:
-            for tree in trees:
-                movies.extend(tree.get_movies())
-        else:
-            movies = tree.get_movies()
-        
+
         return movies
 
+    # #returns all movies that have the same input up to a specific depth of a tree
+    # def movie_up_to_depth(self, input: list, depth_index: int) -> list[Movie]:
+    #     MAX_DEPTH = 27
+    #     if depth_index > MAX_DEPTH:
+    #         return []
+    #     # Traverse the tree up to the specific depth
+    #     trees = self.traverse_tree(input[:depth_index])
+    #     movies = []
+    #     if len(trees) > 1:
+    #         for tree in trees:
+    #             movies.extend(tree.get_movies())
+    #     else:
+    #         movies = tree.get_movies()
+    #     return movies
 
 
-# y = Binary_Csv('movie_data_small.csv', 'decision_tree.csv')
-# # print(y.transform_movie_data('movie_data_small.csv'))
-# y.create_decision_csv()
+if __name__ == '__main__':
+    import python_ta
 
+    python_ta.check_all(config={
+        'extra-imports': ['MovieData', 'numpy', 'pandas', 'pickle'],  # the names (strs) of imported modules
+        'allowed-io': [],     # the names (strs) of functions that call print/open/input
+        'max-line-length': 120
+    })

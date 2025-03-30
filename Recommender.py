@@ -3,7 +3,7 @@ from tkinter import ttk, messagebox
 import tkinter.font as tkfont
 from tree import MovieDecisionTree
 from MovieActorGraph import load_movie_actor_graph
-from tree import Binary_Csv
+from tree import BinaryCSV
 import csv
 import pickle
 from tree import Movie
@@ -265,7 +265,7 @@ class Recommender:
 
 
         # call the encoding and tree traversal functions
-        Binary_Csv('imdb_top_1000.csv', 'decision_tree.csv').create_decision_csv()
+        BinaryCSV('imdb_top_1000.csv', 'decision_tree.csv').create_decision_csv()
         decision_tree = build_decision_tree('decision_tree.csv')  # create decision tree
         encoded = self.convert_user_input(encoded_input, 'decision_tree.csv')
         recommended_movies = get_rec(decision_tree, encoded)  # get movie recommendations
