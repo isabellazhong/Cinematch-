@@ -32,7 +32,7 @@ from tree import MovieDecisionTree
 from movie_actor_graph import Graph, load_movie_actor_graph
 from tree import BinaryCSV
 from tree import Movie
-from typing import Any
+from typing import Any, Optional
 
 def get_rec(tree: MovieDecisionTree, _input: list) -> list:
     recommendations = tree.traverse_tree(_input)
@@ -66,9 +66,9 @@ class Recommender:
     colour_blue: str
     colour_dark: str
     colour_light: str
-    actor_entry: tk.Entry
-    length_var: tk.StringVar
-    genre_listbox: tk.Listbox
+    actor_entry: Optional[tk.Entry]
+    length_var: Optional[tk.StringVar]
+    genre_listbox: Optional[tk.Listbox]
 
 
 
