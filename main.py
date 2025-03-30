@@ -1,9 +1,13 @@
-"""CSC111 Winter 2025 Exercise 4: More Graphs and Recommendations (Part 1)
-
+"""
 Module Description
 ==================
-This module contains the Graph and _Vertex classes from lecture, and the functions
-you'll complete for Part 1 of this exercise.
+
+This is the main module for PickMeWatchMe, a movie recommedation system that reccomends
+users movies based on inputted actors, genres, etc. 
+
+This module:
+- uses the tree module to create a decision tree of films based on the movie dataset
+- runs a Tkinter-based graphical user interface and uses the recommender module to allow user input
 
 Copyright and Usage Information
 ===============================
@@ -18,7 +22,7 @@ This file is Copyright (c) 2025 Victoria Cai, Isabella Zhong, Maya Dowman, Grace
 import tkinter as tk
 from tkinter import ttk
 from tree import Binary_Csv
-from Recommender import Recommender
+from recommender import Recommender
 
 
 # Configure styles
@@ -32,29 +36,24 @@ style.configure('Secondary.TButton', font=('Arial', 14),
 
 
 if __name__ == "__main__":
-# # You can uncomment the following lines for code checking/debugging purposes.
-#     # However, we recommend commenting out these lines when working with the large
-#     # datasets, as checking representation invariants and preconditions greatly
-#     # increases the running time of the functions/methods.
-#     # import python_ta.contracts
-#     # python_ta.contracts.check_all_contracts()
 
-#     # import doctest
-#     #
-#     # doctest.testmod()
-#     #
-#     # import python_ta
-#     #
-#     # python_ta.check_all(config={
-#     #     'max-line-length': 120,
-#     #     'disable': ['E1136'],
-#     #     'extra-imports': ['csv', 'networkx'],
-#     #     'allowed-io': ['load_movie_actor_graph'],
-#     #     'max-nested-blocks': 4
-#     # })
+    import python_ta.contracts
+    python_ta.contracts.check_all_contracts()
+
+    import doctest
+    
+    doctest.testmod()
+    
+    import python_ta
+    
+    python_ta.check_all(config={
+        'max-line-length': 120,
+        'extra-imports': ['tkinter', 'tree', 'recommender'],
+        'max-nested-blocks': 4
+    })
+
     Binary_Csv('imdb_top_1000.csv', 'decision_tree.csv').create_decision_csv()
     
     root1 = tk.Tk()
     app = Recommender(root1)
     root1.mainloop()
-
