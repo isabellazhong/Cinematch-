@@ -5,6 +5,9 @@ from tree import MovieDecisionTree
 from MovieActorGraph import load_movie_actor_graph
 from tree import Binary_Csv
 import csv
+import pickle
+from tree import Movie
+import base64
 
 def get_rec(tree: MovieDecisionTree, input: list) -> list:
     recommendations = tree.traverse_tree(input)
@@ -16,7 +19,7 @@ def build_decision_tree(file:str) -> MovieDecisionTree:
         reader = csv.reader(csv_file)
         next(reader)
         for row in reader:
-            movie = row[0]
+            movie = pickle.loads(eval(row[0]))
             movie_list = row[1:] + [movie]
             tree.create_branch(movie_list)
     return tree
@@ -268,18 +271,6 @@ class Recommender:
         elif recommended_movies:
             self.show_movie_list(recommended_movies, "Movie Recommendations")
 
-    def extract_title(self, movie_string):
-        """Extract the title of the movie str for string of movie object. Should not be called on other strings
-        (Returns ValueError if called on different type of str)."""
-        if movie_string.startswith("Movie("):
-            # Find the position where the title starts
-            start = len("Movie('")
-            # Find the position where the title ends (before ",'https")
-            end = movie_string.find(", 'https")
-            # Extract and return the title
-            return movie_string[start:end]
-        else:
-            raise ValueError
 
     def show_movie_list(self, movies, title):
         """
@@ -306,7 +297,8 @@ class Recommender:
 
         # Insert data into the tree
         for movie in movies:
-            if movie.startswith("Movie("):  # Check if it's a Movie object string
+            if isinstance(movie, Movie):  # Check if it's a Movie object 
+                print(movie)
                 movie_title = self.extract_title(movie)
                 tree.insert("", tk.END, values=(movie_title,))
             else:

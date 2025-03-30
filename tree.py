@@ -34,10 +34,6 @@ class Movie:
         self.duration = duration
         self.rating = rating
 
-    #turns the class into a string to store in csv
-    def __repr__(self) -> str:
-        return f"Movie('{self.title}', '{self.link}', '{self.genre}', '{self.duration}', '{self.rating}')"
-
 
 class Binary_Csv:
     movie_file: str
