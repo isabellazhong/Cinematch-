@@ -14,6 +14,7 @@ class CineMatch:
     """
 
     def __init__(self, root):
+        #Initialize the main window and main variables
         self.root = root
         self.root.title("CineMatch")
         self.root.geometry("800x600")
@@ -43,7 +44,6 @@ class CineMatch:
     def create_welcome_screen(self):
         """
         Creates the welcome screen for CineMatch.
-        :return:
         """
         self.welcome_frame.pack(fill=tk.BOTH, expand=True)
 
@@ -67,7 +67,7 @@ class CineMatch:
         self.welcome_frame.pack_forget()
         self.actor_frame.pack(fill=tk.BOTH, expand=True, padx=50, pady=50)
 
-        tk.Label(self.actor_frame, text="If you would like an actor/actress-only search, "
+        tk.Label(self.actor_frame, text="If you would like an Actor/Actress-only based search,\n"
         "Enter the actor/actress you would like to watch:",
                  font=("Helvetica", 16), fg="white", bg="#002138").pack(pady=20)
 
@@ -217,6 +217,8 @@ class CineMatch:
         selected_indices = self.genre_listbox.curselection()
         genres = {genre_map[self.genre_listbox.get(i)] for i in selected_indices}
         encoded_input = (length, tuple(genres))
+
+        # call the encoding and tree traversal functions
         convert_user_input(encoded_input, 'decision_tree.csv')
         decision_tree = build_decision_tree("imdb_top_1000.csv")
         recommended_movies = get_rec(decision_tree, list(encoded_input))
@@ -236,7 +238,7 @@ class CineMatch:
         # Create result window
         result_window = tk.Toplevel(self.root)
         result_window.title(title)
-        result_window.geometry("400x600")  # Adjusted width since we're only showing titles
+        result_window.geometry("400x600")  
 
         style = ttk.Style(result_window)
         style.configure("Treeview", font=("Helvetica", 12), rowheight=25)
@@ -273,7 +275,7 @@ style.configure('Secondary.TButton', font=('Arial', 14),
 
 def build_decision_tree(file:str) -> MovieDecisionTree:
     tree = MovieDecisionTree('', [])
-    with open(file) as csv_file:
+    with open(file, 'r', encoding='latin-1') as csv_file:
         reader = csv.reader(csv_file)
         next(reader)
         for row in reader:
@@ -317,7 +319,7 @@ print(rec)
 
 
 
-# if __name__ == "__main__":
+if __name__ == "__main__":
 # # You can uncomment the following lines for code checking/debugging purposes.
 #     # However, we recommend commenting out these lines when working with the large
 #     # datasets, as checking representation invariants and preconditions greatly
@@ -338,8 +340,8 @@ print(rec)
 #     #     'allowed-io': ['load_movie_actor_graph'],
 #     #     'max-nested-blocks': 4
 #     # })
-#     root1 = tk.Tk()
-#     app = CineMatch(root1)
-#     root1.mainloop()
-#     # test
-#     print(convert_user_input({'runtime_bin_short', 'genre_Family'}, 'decision_tree.csv'))
+    root1 = tk.Tk()
+    app = CineMatch(root1)
+    root1.mainloop()
+    # test
+    print(convert_user_input({'runtime_bin_short', 'genre_Family'}, 'decision_tree.csv'))
