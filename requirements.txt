@@ -1,0 +1,23 @@
+# CSC111 Winter 2025: Python libraries we used in this project
+
+# Testing and code checking
+pytest
+python-ta~=2.9.1
+
+# Graphics and data visualization
+plotly>=5.22.0
+pygame==2.6.1
+tkinter
+
+#data
+csv
+__future__
+pickle
+typing
+base64
+pandas
+sklearn.tree
+sklearn.model_selection
+sklearn
+sklearn.preprocessing
+numpy
