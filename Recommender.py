@@ -193,20 +193,20 @@ class Recommender:
         genre_dropdown["menu"].config(font=self.button_font, bg=self.colour_light, fg=self.colour_dark)
         genre_dropdown.pack(side=tk.LEFT)
         #  listbox to allow multiple selections
-        # self.genre_listbox = tk.Listbox(genre_frame, selectmode="multiple",
-        #                                 font=self.button_font, bg=self.colour_light,
-        #                                 fg=self.colour_dark, height=10)
+        self.genre_listbox = tk.Listbox(genre_frame, selectmode="multiple",
+                                        font=self.button_font, bg=self.colour_light,
+                                        fg=self.colour_dark, height=10)
 
-        # for genre in genre_options:
-        #     self.genre_listbox.insert(tk.END, genre)
+        for genre in genre_options:
+            self.genre_listbox.insert(tk.END, genre)
 
-        # scrollbar = tk.Scrollbar(genre_frame)
-        # scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        scrollbar = tk.Scrollbar(genre_frame)
+        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 
-        # self.genre_listbox.config(yscrollcommand=scrollbar.set)
-        # scrollbar.config(command=self.genre_listbox.yview)
+        self.genre_listbox.config(yscrollcommand=scrollbar.set)
+        scrollbar.config(command=self.genre_listbox.yview)
 
-        # self.genre_listbox.pack(side=tk.LEFT)
+        self.genre_listbox.pack(side=tk.LEFT)
 
         # Submit button
         submit_btn = tk.Button(self.recommendation_frame, text="Submit",
@@ -252,12 +252,11 @@ class Recommender:
             "Western": "genre_Western"
         }
 
-        length = length_map[self.length_var.get()]
-        # selected_indices = self.genre_listbox.curselection()
-        # genres = {genre_map[self.genre_listbox.get(i)] for i in selected_indices}
-        # encoded_input = (length, tuple(genres))
-        genre = genre_map[self.genre_var.get()]
-        encoded_input = (length, genre)
+        length = {length_map[self.length_var.get()]}
+        selected_indices = self.genre_listbox.curselection()
+        genres = {genre_map[self.genre_listbox.get(i)] for i in selected_indices}
+        encoded_input = length.union(genres)
+
 
         # call the encoding and tree traversal functions
         Binary_Csv('imdb_top_1000.csv', 'decision_tree.csv').create_decision_csv()
