@@ -1,291 +1,9 @@
 import tkinter as tk
-from tkinter import ttk, messagebox
-import tkinter.font as tkfont
-from MovieActorGraph import _Vertex, Graph, load_movie_actor_graph
-from MovieData import MovieData
+from tkinter import ttk
 import csv
-from tree import Movie, MovieDecisionTree
+from tree import MovieDecisionTree
 from tree import Binary_Csv
-
-
-class CineMatch:
-    """
-    Class for the full graphic user interface for CineMatch.
-    """
-
-    def __init__(self, root):
-        #Initialize the main window and main variables
-        self.root = root
-        self.root.title("CineMatch")
-        self.root.geometry("800x600")
-        self.root.configure(bg="#002138")
-
-        # Initialize recommendation functionality components
-        # self.tree = Binary_Csv('imdb_top_1000.csv', 'decision_tree.csv').create_decision_csv()
-        self.graph = load_movie_actor_graph("imdb_top_1000.csv")
-
-        # Custom fonts
-        self.title_font = tkfont.Font(family="Helvetica", size=24, weight="bold")
-        self.button_font = tkfont.Font(family="Helvetica", size=12)
-
-        # Create frames
-        self.welcome_frame = tk.Frame(root, bg="#002138")
-        self.actor_frame = tk.Frame(root, bg="#002138")
-        self.recommendation_frame = tk.Frame(root, bg="#002138")
-
-        # Initialize UI
-        self.create_welcome_screen()
-
-        # Colour codes
-        self.colour_dark = "#0F6BAE"
-        self.colour_blue = "#83B8FF"
-        self.colour_light = "#C6CDFF"
-
-    def create_welcome_screen(self):
-        """
-        Creates the welcome screen for CineMatch.
-        """
-        self.welcome_frame.pack(fill=tk.BOTH, expand=True)
-
-        tk.Label(self.welcome_frame, text="Welcome to", font=self.title_font,
-                 fg="#83B8FF", bg="#002138").pack(pady=20)
-        tk.Label(self.welcome_frame, text="CineMatch!", font=self.title_font,
-                 fg="#C6CDFF", bg="#002138").pack(pady=10)
-
-        #  Start button. If clicked go to actor screen
-        start_btn = tk.Button(self.welcome_frame, text="Start Matching",
-                              command=self.show_actor_screen,
-                              font=self.button_font, fg="purple", bg="#0F6BAE",
-                              activebackground="#3E8E41", activeforeground="white",
-                              borderwidth=0, highlightthickness=0)
-        start_btn.pack(pady=40, ipadx=20, ipady=10)
-
-    def show_actor_screen(self):
-        """
-        Display the screen asking if the user has an actor/actress in mind.
-        """
-        self.welcome_frame.pack_forget()
-        self.actor_frame.pack(fill=tk.BOTH, expand=True, padx=50, pady=50)
-
-        tk.Label(self.actor_frame, text="If you would like an Actor/Actress-only based search,\n"
-        "Enter the actor/actress you would like to watch:",
-                 font=("Helvetica", 16), fg="white", bg="#002138").pack(pady=20)
-
-        self.actor_entry = tk.Entry(self.actor_frame, width=30, font=self.button_font,
-                                    bg=self.colour_light, fg=self.colour_dark, highlightthickness=0,
-                                    borderwidth=0, insertbackground="white")
-        self.actor_entry.pack(pady=10, ipady=5)
-
-        btn_frame = tk.Frame(self.actor_frame, bg="#002138")
-        btn_frame.pack(pady=20)
-
-        # Enter the inputted actor, goes to the graph functionality
-        enter_btn = tk.Button(btn_frame, text="Enter Actor (Case Sensitive)",
-                               command=self.handle_actor_search,
-                               font=self.button_font, fg="purple", bg=self.colour_blue,
-                               activebackground="#3E8E41", activeforeground="white",
-                               borderwidth=0, highlightthickness=0)
-        enter_btn.pack(side=tk.LEFT, padx=10)
-
-        # Skip to rest of recommendation system by calling tree functionality
-        skip_btn = tk.Button(btn_frame, text="Skip to Runtime/Genre Search",
-                             command=self.show_tree_recommendations,
-                             font=self.button_font, fg="purple", bg=self.colour_blue,
-                             activebackground="#FF3737", activeforeground="white",
-                             borderwidth=0, highlightthickness=0)
-        skip_btn.pack(side=tk.LEFT, padx=10)
-
-    def handle_actor_search(self):
-        """
-        Recommend movies based on the actor the user inputted.
-        """
-        actor_name = self.actor_entry.get()  # gets the inputted actor's name
-        if actor_name:
-            if actor_name not in self.graph.get_vertices('actor'):
-                messagebox.showinfo("Sorry", f"{actor_name} is not in our Database")
-                return
-             
-            movies = self.graph.get_neighbours(actor_name)    
-            if movies:
-                self.show_movie_list(movies, f"Movies featuring {actor_name}")
-            else:
-                messagebox.showinfo("Not Found", f"No movies found for {actor_name}")
-
-        else:  # no actor name inputted
-           messagebox.showwarning("Input Error", "Please enter an actor's name")
-
-    def show_tree_recommendations(self):
-        """
-        Shows recommendations by using the tree.
-        """
-        self.actor_frame.pack_forget()
-        self.recommendation_frame.pack(fill=tk.BOTH, expand=True, padx=50, pady=50)
-
-        tk.Label(self.recommendation_frame,
-                 text="Please select your preferences:",
-                 font=("Helvetica", 16), fg="white", bg="#002138").pack(pady=20)
-
-        # Runtime dropdown
-        length_frame = tk.Frame(self.recommendation_frame, bg="#002138")
-        length_frame.pack(pady=10)
-
-        tk.Label(length_frame, text="Runtime:",
-                 font=self.button_font, fg="white", bg="#002138").pack(side=tk.LEFT, padx=10)
-
-        length_options = ["0-60 minutes", "60-90 minutes", "90-120 minutes", "120-180 minutes", "180-240 minutes", "240+ minutes"]
-        self.length_var = tk.StringVar(value=length_options[0])
-        length_dropdown = tk.OptionMenu(length_frame, self.length_var, *length_options)
-        length_dropdown.config(font=self.button_font, bg=self.colour_blue, fg="white",
-                               activebackground=self.colour_dark, activeforeground="white",
-                               highlightthickness=0)
-        length_dropdown["menu"].config(font=self.button_font, bg=self.colour_light, fg=self.colour_dark)
-        length_dropdown.pack(side=tk.LEFT)
-
-        # Genre multiple-selection Listbox
-        genre_frame = tk.Frame(self.recommendation_frame, bg="#002138")
-        genre_frame.pack(pady=10)
-
-        tk.Label(genre_frame, text="Select Genre(s):",
-                 font=self.button_font, fg="white", bg="#002138").pack(side=tk.LEFT, padx=10)
-
-        genre_options = ["Action", "Adventure", "Animation", "Biography", "Comedy", "Crime",
-                         "Drama", "Family", "Fantasy", "Film-Noir", "History", "Horror",
-                         "Music", "Musical", "Mystery", "Romance", "Sci-Fi", "Support",
-                         "Thriller", "War", "Western"]
-
-        self.genre_var = tk.StringVar(value=genre_options[0])
-        genre_dropdown = tk.OptionMenu(genre_frame, self.genre_var, *genre_options)
-        genre_dropdown.config(font=self.button_font, bg=self.colour_blue, fg="white",
-                               activebackground=self.colour_dark, activeforeground="white",
-                               highlightthickness=0)
-        genre_dropdown["menu"].config(font=self.button_font, bg=self.colour_light, fg=self.colour_dark)
-        genre_dropdown.pack(side=tk.LEFT)
-        #  listbox to allow multiple selections
-        # self.genre_listbox = tk.Listbox(genre_frame, selectmode="multiple",
-        #                                 font=self.button_font, bg=self.colour_light,
-        #                                 fg=self.colour_dark, height=10)
-
-        # for genre in genre_options:
-        #     self.genre_listbox.insert(tk.END, genre)
-
-        # scrollbar = tk.Scrollbar(genre_frame)
-        # scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
-
-        # self.genre_listbox.config(yscrollcommand=scrollbar.set)
-        # scrollbar.config(command=self.genre_listbox.yview)
-
-        # self.genre_listbox.pack(side=tk.LEFT)
-
-        # Submit button
-        submit_btn = tk.Button(self.recommendation_frame, text="Submit",
-                               command= self.process_preferences,  # call processing function
-                               font=self.button_font, fg="purple", bg=self.colour_blue,
-                               activebackground="#3E8E41", activeforeground="white",
-                               borderwidth=0, highlightthickness=0)
-        submit_btn.pack(pady=20)
-
-    def process_preferences(self):
-        """
-        Stores the preferences into a tuple
-        """
-        length_map = {
-            "0-60 minutes": "runtime_bin_very-short",
-            "60-90 minutes": "runtime_bin_short",
-            "90-120 minutes": "runtime_bin_mid",
-            "120-180 minutes": "runtime_bin_mid-long",
-            "180-240 minutes": "runtime_bin_long",
-            "240+ minutes": "runtime_bin_very-long"
-        }
-        genre_map = {
-            "Action": "genre_Action",
-            "Animation": "genre_Animation",
-            "Adventure": "genre_Adventure",
-            "Biography": "genre_Biography",
-            "Comedy": "genre_Comedy",
-            "Crime": "genre_Crime",
-            "Drama": "genre_Drama",
-            "Family": "genre_Family",
-            "Fantasy": "genre_Fantasy",
-            "Film-Noir": "genre_Film-Noir",
-            "History": "genre_History",
-            "Horror": "genre_Horror",
-            "Music": "genre_Music",
-            "Musical": "genre_Musical",
-            "Mystery": "genre_Mystery",
-            "Romance": "genre_Romance",
-            "Sci-Fi": "genre_Sci-Fi",
-            "Support": "genre_Support",
-            "Thriller": "genre_Thriller",
-            "War": "genre_War",
-            "Western": "genre_Western"
-        }
-
-        length = length_map[self.length_var.get()]
-        # selected_indices = self.genre_listbox.curselection()
-        # genres = {genre_map[self.genre_listbox.get(i)] for i in selected_indices}
-        # encoded_input = (length, tuple(genres))
-        genre = genre_map[self.genre_var.get()]
-        encoded_input = (length, genre)
-
-        # call the encoding and tree traversal functions
-        Binary_Csv('imdb_top_1000.csv', 'decision_tree.csv').create_decision_csv()
-        decision_tree = build_decision_tree('decision_tree.csv')  # create decision tree
-        encoded = convert_user_input(encoded_input, 'decision_tree.csv')
-        recommended_movies = get_rec(decision_tree, encoded)  # get movie recommendations
-        if recommended_movies == 'Not Found':
-            messagebox.showinfo("No Recommendations", "No movie recommendations found for your preferences.")
-        elif recommended_movies:
-            self.show_movie_list(recommended_movies, "Movie Recommendations")
-
-    def extract_title(self, movie_string):
-        """Extract the title of the movie str for string of movie object. Should not be called on other strings
-        (Returns ValueError if called on different type of str)."""
-        if movie_string.startswith("Movie("):
-            # Find the position where the title starts
-            start = len("Movie('")
-            # Find the position where the title ends (before ",'https")
-            end = movie_string.find(", 'https")
-            # Extract and return the title
-            return movie_string[start:end]
-        else:
-            raise ValueError
-
-    def show_movie_list(self, movies, title):
-        """
-        Shows the list of movie recommendations in a window.
-        Displays only movie titles since the vertices are just movie titles.
-        """
-        # Create result window
-        result_window = tk.Toplevel(self.root)
-        result_window.title(title)
-        result_window.geometry("400x600")  
-
-        style = ttk.Style(result_window)
-        style.configure("Treeview", font=("Helvetica", 12), rowheight=25)
-        style.configure("Treeview.Heading", font=("Helvetica", 14, "bold"))
-
-        # Tree showcase of movie recommendations
-        tree = ttk.Treeview(result_window, columns=("Title",), show="headings")
-
-        # Define column heading
-        tree.heading("Title", text="Movie Title")
-
-        # Adjust column width
-        tree.column("Title", width=350, anchor="center")
-
-        # Insert data into the tree
-        for movie in movies:
-            if movie.startswith("Movie("):  # Check if it's a Movie object string
-                movie_title = self.extract_title(movie)
-                tree.insert("", tk.END, values=(movie_title,))
-            else:
-                tree.insert("", tk.END, values=(movie,))  # Movie is a string (title)
-
-        tree.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
-
-        scrollbar = ttk.Scrollbar(result_window, orient="vertical", command=tree.yview)
-        tree.configure(yscrollcommand=scrollbar.set)
-        scrollbar.pack(side="right", fill="y")
+from Recommender import Recommender
 
 
 # Configure styles
@@ -327,21 +45,9 @@ def convert_user_input(input:tuple, file: str) -> list:
 
         return encoded
 
-
 def get_rec(tree: MovieDecisionTree, input: list) -> list:
     recommendations = tree.traverse_tree(input)
     return recommendations
-
-
-#test getting rec
-Binary_Csv('imdb_top_1000.csv', 'decision_tree.csv').create_decision_csv()
-t = build_decision_tree('decision_tree.csv')
-print(t)
-rec = get_rec(t, [0,0,1,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0])
-print(rec)
-
-
-
 
 if __name__ == "__main__":
 # # You can uncomment the following lines for code checking/debugging purposes.
@@ -364,8 +70,17 @@ if __name__ == "__main__":
 #     #     'allowed-io': ['load_movie_actor_graph'],
 #     #     'max-nested-blocks': 4
 #     # })
+    Binary_Csv('imdb_top_1000.csv', 'decision_tree.csv').create_decision_csv()
+    t = build_decision_tree('decision_tree.csv')
+
     root1 = tk.Tk()
-    app = CineMatch(root1)
+    app = Recommender(root1)
     root1.mainloop()
+
+    #test getting rec
+    print(t)
+    rec = get_rec(t, [0,0,1,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0])
+    print(rec)
+
     # test
     print(convert_user_input({'runtime_bin_short', 'genre_Family'}, 'decision_tree.csv'))
