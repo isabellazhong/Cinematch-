@@ -21,7 +21,7 @@ class CineMatch:
         self.root.configure(bg="#002138")
 
         # Initialize recommendation functionality components
-        # self.tree = Movie()
+        # self.tree = Binary_Csv('imdb_top_1000.csv', 'decision_tree.csv').create_decision_csv()
         self.graph = load_movie_actor_graph("imdb_top_1000.csv")
 
         # Custom fonts
@@ -153,21 +153,28 @@ class CineMatch:
                          "Music", "Musical", "Mystery", "Romance", "Sci-Fi", "Support",
                          "Thriller", "War", "Western"]
 
+        self.genre_var = tk.StringVar(value=genre_options[0])
+        genre_dropdown = tk.OptionMenu(genre_frame, self.genre_var, *genre_options)
+        genre_dropdown.config(font=self.button_font, bg=self.colour_blue, fg="white",
+                               activebackground=self.colour_dark, activeforeground="white",
+                               highlightthickness=0)
+        genre_dropdown["menu"].config(font=self.button_font, bg=self.colour_light, fg=self.colour_dark)
+        genre_dropdown.pack(side=tk.LEFT)
         #  listbox to allow multiple selections
-        self.genre_listbox = tk.Listbox(genre_frame, selectmode="multiple",
-                                        font=self.button_font, bg=self.colour_light,
-                                        fg=self.colour_dark, height=10)
+        # self.genre_listbox = tk.Listbox(genre_frame, selectmode="multiple",
+        #                                 font=self.button_font, bg=self.colour_light,
+        #                                 fg=self.colour_dark, height=10)
 
-        for genre in genre_options:
-            self.genre_listbox.insert(tk.END, genre)
+        # for genre in genre_options:
+        #     self.genre_listbox.insert(tk.END, genre)
 
-        scrollbar = tk.Scrollbar(genre_frame)
-        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        # scrollbar = tk.Scrollbar(genre_frame)
+        # scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 
-        self.genre_listbox.config(yscrollcommand=scrollbar.set)
-        scrollbar.config(command=self.genre_listbox.yview)
+        # self.genre_listbox.config(yscrollcommand=scrollbar.set)
+        # scrollbar.config(command=self.genre_listbox.yview)
 
-        self.genre_listbox.pack(side=tk.LEFT)
+        # self.genre_listbox.pack(side=tk.LEFT)
 
         # Submit button
         submit_btn = tk.Button(self.recommendation_frame, text="Submit",
@@ -214,21 +221,34 @@ class CineMatch:
         }
 
         length = length_map[self.length_var.get()]
-        selected_indices = self.genre_listbox.curselection()
-        genres = {genre_map[self.genre_listbox.get(i)] for i in selected_indices}
-        encoded_input = (length, tuple(genres))
+        # selected_indices = self.genre_listbox.curselection()
+        # genres = {genre_map[self.genre_listbox.get(i)] for i in selected_indices}
+        # encoded_input = (length, tuple(genres))
+        genre = genre_map[self.genre_var.get()]
+        encoded_input = (length, genre)
 
         # call the encoding and tree traversal functions
-        convert_user_input(encoded_input, 'decision_tree.csv')
-        decision_tree = build_decision_tree("imdb_top_1000.csv")
-        recommended_movies = get_rec(decision_tree, list(encoded_input))
-
-        if recommended_movies:
-            self.show_movie_list(recommended_movies, "Movie Recommendations")
-        else:
+        Binary_Csv('imdb_top_1000.csv', 'decision_tree.csv').create_decision_csv()
+        decision_tree = build_decision_tree('decision_tree.csv')  # create decision tree
+        encoded = convert_user_input(encoded_input, 'decision_tree.csv')
+        recommended_movies = get_rec(decision_tree, encoded)  # get movie recommendations
+        if recommended_movies == 'Not Found':
             messagebox.showinfo("No Recommendations", "No movie recommendations found for your preferences.")
+        elif recommended_movies:
+            self.show_movie_list(recommended_movies, "Movie Recommendations")
 
-
+    def extract_title(self, movie_string):
+        """Extract the title of the movie str for string of movie object. Should not be called on other strings
+        (Returns ValueError if called on different type of str)."""
+        if movie_string.startswith("Movie("):
+            # Find the position where the title starts
+            start = len("Movie('")
+            # Find the position where the title ends (before ",'https")
+            end = movie_string.find(", 'https")
+            # Extract and return the title
+            return movie_string[start:end]
+        else:
+            raise ValueError
 
     def show_movie_list(self, movies, title):
         """
@@ -255,7 +275,11 @@ class CineMatch:
 
         # Insert data into the tree
         for movie in movies:
-            tree.insert("", tk.END, values=(movie,))  # Movie is a string (title)
+            if movie.startswith("Movie("):  # Check if it's a Movie object string
+                movie_title = self.extract_title(movie)
+                tree.insert("", tk.END, values=(movie_title,))
+            else:
+                tree.insert("", tk.END, values=(movie,))  # Movie is a string (title)
 
         tree.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
 
@@ -275,7 +299,7 @@ style.configure('Secondary.TButton', font=('Arial', 14),
 
 def build_decision_tree(file:str) -> MovieDecisionTree:
     tree = MovieDecisionTree('', [])
-    with open(file, 'r', encoding='latin-1') as csv_file:
+    with open(file) as csv_file:
         reader = csv.reader(csv_file)
         next(reader)
         for row in reader:
@@ -295,7 +319,7 @@ def convert_user_input(input:tuple, file: str) -> list:
         # starts at one because header[0] is the movie node
         header_index = 1
         while header_index < len(header):
-            if header[header_index] in input:
+            if header[header_index] in input:  
                 encoded.append(1)
             else:
                 encoded.append(0)
