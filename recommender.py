@@ -53,7 +53,7 @@ def build_decision_tree(file:str) -> MovieDecisionTree:
 
 class Recommender:
     """
-    Class for the full graphic user interface for PickMeWacthMe.
+    Class for the full graphic user interface for PickMeWatchMe.
     """
 
     root: Any
