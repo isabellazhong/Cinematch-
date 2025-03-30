@@ -2,13 +2,13 @@
 
 Module Description
 ==================
-This module contains the Graph and _Vertex classes from lecture, and the functions
-you'll complete for Part 1 of this exercise.
+This module contains the MovieData class. The MovieData class processes the movie dataset and creates
+a MovieData object representing all of the basic information of the movie dataset.
 
 Copyright and Usage Information
 ===============================
 
-This file is solely for the personal and private use of 
+This file is solely for the personal and private use of
 Victoria Cai, Isabella Zhong, Maya Dowman, Grace-Keyi Wang. All forms of
 distribution of this code, whether as given or with any changes, are
 expressly prohibited.
