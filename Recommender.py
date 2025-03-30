@@ -57,6 +57,9 @@ class Recommender:
         self.colour_blue = "#83B8FF"
         self.colour_light = "#C6CDFF"
     
+    def extract_title(self, movie:Movie):
+        return movie.title
+    
     #encodes the user input into a binary list so that it can traversre through the list
     def convert_user_input(self, input:tuple, file: str) -> list:
         with open(file) as csv_file:
@@ -298,7 +301,6 @@ class Recommender:
         # Insert data into the tree
         for movie in movies:
             if isinstance(movie, Movie):  # Check if it's a Movie object 
-                print(movie)
                 movie_title = self.extract_title(movie)
                 tree.insert("", tk.END, values=(movie_title,))
             else:

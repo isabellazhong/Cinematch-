@@ -16,9 +16,6 @@ style.configure('Secondary.TButton', font=('Arial', 14),
                 foreground='white', background='#FF6B6B')
 
 
-
-
-
 if __name__ == "__main__":
 # # You can uncomment the following lines for code checking/debugging purposes.
 #     # However, we recommend commenting out these lines when working with the large

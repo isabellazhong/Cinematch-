@@ -204,7 +204,6 @@ class MovieDecisionTree:
         
         # Traverse the tree up to the specific depth
         trees = self.traverse_tree(input[:depth_index])
-        print(trees)
         movies = [] 
         if len(trees) > 1:
             for tree in trees:
