@@ -1,9 +1,25 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
 import tkinter.font as tkfont
+from tree import MovieDecisionTree
 from MovieActorGraph import load_movie_actor_graph
 from tree import Binary_Csv
+import csv
 
+def get_rec(tree: MovieDecisionTree, input: list) -> list:
+    recommendations = tree.traverse_tree(input)
+    return recommendations
+
+def build_decision_tree(file:str) -> MovieDecisionTree:
+    tree = MovieDecisionTree('', [])
+    with open(file) as csv_file:
+        reader = csv.reader(csv_file)
+        next(reader)
+        for row in reader:
+            movie = row[0]
+            movie_list = row[1:] + [movie]
+            tree.create_branch(movie_list)
+    return tree
 
 class Recommender:
     """
@@ -37,7 +53,26 @@ class Recommender:
         self.colour_dark = "#0F6BAE"
         self.colour_blue = "#83B8FF"
         self.colour_light = "#C6CDFF"
+    
+    #encodes the user input into a binary list so that it can traversre through the list
+    def convert_user_input(self, input:tuple, file: str) -> list:
+        with open(file) as csv_file:
+            reader = csv.reader(csv_file)
+            rows = list(reader)
+            header = rows[0]
 
+            encoded = []
+            # starts at one because header[0] is the movie node
+            header_index = 1
+            while header_index < len(header):
+                if header[header_index] in input:  
+                    encoded.append(1)
+                else:
+                    encoded.append(0)
+                header_index += 1
+
+            return encoded
+    
     def create_welcome_screen(self):
         """
         Creates the welcome screen for PickMeWatchMe.
@@ -227,7 +262,7 @@ class Recommender:
         # call the encoding and tree traversal functions
         Binary_Csv('imdb_top_1000.csv', 'decision_tree.csv').create_decision_csv()
         decision_tree = build_decision_tree('decision_tree.csv')  # create decision tree
-        encoded = convert_user_input(encoded_input, 'decision_tree.csv')
+        encoded = self.convert_user_input(encoded_input, 'decision_tree.csv')
         recommended_movies = get_rec(decision_tree, encoded)  # get movie recommendations
         if recommended_movies == 'Not Found':
             messagebox.showinfo("No Recommendations", "No movie recommendations found for your preferences.")
@@ -283,3 +318,13 @@ class Recommender:
         scrollbar = ttk.Scrollbar(result_window, orient="vertical", command=tree.yview)
         tree.configure(yscrollcommand=scrollbar.set)
         scrollbar.pack(side="right", fill="y")
+
+
+    # #test getting rec
+    # t = build_decision_tree('decision_tree.csv')
+    # print(t)
+    # rec = get_rec(t, [0,0,1,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0])
+    # print(rec)
+
+    # # test
+    # print(self.convert_user_input({'runtime_bin_short', 'genre_Family'}, 'decision_tree.csv'))
