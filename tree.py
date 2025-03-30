@@ -15,11 +15,12 @@ expressly prohibited.
 
 This file is Copyright (c) 2025 Victoria Cai, Isabella Zhong, Maya Dowman, Grace-Keyi Wang
 """
+from typing import Any, Optional
+import pickle
 import pandas as pd
 import numpy as np
-from MovieData import MovieData
-from typing import Any, Optional
-import pickle 
+from movie_data import MovieData
+
 
 class Movie:
 
@@ -266,7 +267,7 @@ if __name__ == '__main__':
     import python_ta
 
     python_ta.check_all(config={
-        'extra-imports': ['MovieData', 'numpy', 'pandas', 'pickle'],  # the names (strs) of imported modules
+        'extra-imports': ['movie_data', 'numpy', 'pandas', 'pickle'],  # the names (strs) of imported modules
         'allowed-io': [],     # the names (strs) of functions that call print/open/input
         'max-line-length': 120
     })
