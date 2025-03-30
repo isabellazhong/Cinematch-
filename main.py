@@ -4,6 +4,7 @@ import csv
 from tree import MovieDecisionTree
 from tree import Binary_Csv
 from Recommender import Recommender
+import pickle
 
 
 # Configure styles
@@ -27,7 +28,7 @@ def build_decision_tree(file:str) -> MovieDecisionTree:
     return tree
 
 #encodes the user input into a binary list so that it can traversre through the list
-def convert_user_input(input:tuple, file: str) -> list:
+def convert_user_input(input:set, file: str) -> list:
     with open(file) as csv_file:
         reader = csv.reader(csv_file)
         rows = list(reader)
@@ -50,16 +51,8 @@ def get_rec(tree: MovieDecisionTree, input: list) -> list:
     return recommendations
 
 
-#test getting rec
-Binary_Csv('imdb_top_1000.csv', 'decision_tree.csv').create_decision_csv()
-t = build_decision_tree('decision_tree.csv')
-rec = get_rec(t, [0,0,1,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0])
-print(rec)
 
 
-
-
-# if __name__ == "__main__":
 if __name__ == "__main__":
 # # You can uncomment the following lines for code checking/debugging purposes.
 #     # However, we recommend commenting out these lines when working with the large
@@ -84,14 +77,15 @@ if __name__ == "__main__":
     Binary_Csv('imdb_top_1000.csv', 'decision_tree.csv').create_decision_csv()
     t = build_decision_tree('decision_tree.csv')
 
-    root1 = tk.Tk()
-    app = Recommender(root1)
-    root1.mainloop()
+    # root1 = tk.Tk()
+    # app = Recommender(root1)
+    # root1.mainloop()
 
     #test getting rec
-    print(t)
-    rec = get_rec(t, [0,0,1,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0])
-    print(rec)
-
+    # print(t)
+    x = convert_user_input({'runtime_bin_mid', 'genre_Comedy', 'genre_Crime', 'genre_Drama'}, 'decision_tree.csv')
+    rec = get_rec(t, x)
+    y = eval(rec[0])
+    print(pickle.loads(y).title)
     # test
-    print(convert_user_input({'runtime_bin_short', 'genre_Family'}, 'decision_tree.csv'))
+    

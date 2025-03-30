@@ -7,6 +7,7 @@ from sklearn.preprocessing import OneHotEncoder
 import numpy as np
 from MovieData import MovieData
 from typing import Any, Optional
+import pickle 
 
 class Movie:
 
@@ -74,7 +75,7 @@ class Binary_Csv:
                 "runtime": runtime,
                 "overview": overview,
                 "imdb_rating": float(imdb_rating) if imdb_rating else np.nan,
-                "movie_node": Movie(series_title, poster_link, genres, runtime, imdb_rating).__repr__()
+                "movie_node": pickle.dumps(Movie(series_title, poster_link, genres, runtime, imdb_rating))
             })
 
 
