@@ -208,53 +208,56 @@ class MovieDecisionTree:
             self._subtrees.append(new_tree)
             new_tree.create_branch(lst[1:])
 
-    def go_left_most(self) -> Movie:
-        """
-            Goes to leftmost branch
-        """
-        if self._root is None:
-            return None
-        elif not self._subtrees:
-            return self._root
-        else:
-            left = self._subtrees[0]
-            return left.go_left_most()
+    ###############################
+    # DIDN'T END UP INCLUDING
+    ###############################
+    # def go_left_most(self) -> Movie:
+    #     """
+    #         Goes to leftmost branch
+    #     """
+    #     if self._root is None:
+    #         return None
+    #     elif not self._subtrees:
+    #         return self._root
+    #     else:
+    #         left = self._subtrees[0]
+    #         return left.go_left_most()
 
-    def go_right_most(self) -> Movie:
-        """
-            goes to right most branch
-        """
-        if self._root is None:
-            return None
-        elif not self._subtrees:
-            return self._root
-        else:
-            left = self._subtrees[-1]
-            return left.go_right_most()
+    # def go_right_most(self) -> Movie:
+    #     """
+    #         goes to right most branch
+    #     """
+    #     if self._root is None:
+    #         return None
+    #     elif not self._subtrees:
+    #         return self._root
+    #     else:
+    #         left = self._subtrees[-1]
+    #         return left.go_right_most()
 
-    def get_movies(self) -> list[Movie]:
-        """
-            returns list of ALL movies at a subtree in the main tree
-        """
-        movies = []
+    # def get_movies(self) -> list[Movie]:
+    #     """
+    #         returns list of ALL movies at a subtree in the main tree
+    #     """
+    #     movies = []
 
-        if not self.get_root() or not self.get_subtrees():
-            return []
-        seen_movies = set()
+    #     if not self.get_root() or not self.get_subtrees():
+    #         return []
+    #     seen_movies = set()
 
-        for subtree in self.get_subtrees():
-            right = subtree.go_right_most()
-            left = subtree.go_left_most()
+    #     for subtree in self.get_subtrees():
+    #         right = subtree.go_right_most()
+    #         left = subtree.go_left_most()
 
-            if right is not None and right not in seen_movies:
-                movies.append(right)
-                seen_movies.add(right)
+    #         if right is not None and right not in seen_movies:
+    #             movies.append(right)
+    #             seen_movies.add(right)
 
-            if left is not None and left not in seen_movies:
-                movies.append(left)
-                seen_movies.add(left)
+    #         if left is not None and left not in seen_movies:
+    #             movies.append(left)
+    #             seen_movies.add(left)
 
-        return movies
+    #     return movies
 
     # #returns all movies that have the same input up to a specific depth of a tree
     # def movie_up_to_depth(self, input: list, depth_index: int) -> list[Movie]:
