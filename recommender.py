@@ -37,7 +37,24 @@ from movie_actor_graph import Graph, load_movie_actor_graph
 
 class Recommender:
     """
-    Class for the full graphic user interface for PickMeWacthMe.
+    Class for the full graphic user interface for PickMeWacthMe. This class manages the main
+    application window and handles user interactions for movie recommendations based
+    on actors, runtime, and genres.
+
+    Instance attributes:
+            - self.root: The root window of the application.
+            - self.graph: A graph representation of movie-actor relationships.
+            - self.title_font: Font used for titles.
+            - self.button_font: Font used for buttons.
+            - self.welcome_frame: Frame for the welcome screen.
+            - actor_frame: Frame for the actor input screen.
+            - recommendation_frame: Frame for the recommendation screen.
+            - colour_dark: Dark color used in the UI.
+            - colour_blue: Blue color used in the UI.
+            - colour_light: Light color used in the UI.
+            - actor_entry: Entry widget for actor name input.
+            - length_var: Variable to store selected movie length.
+            - genre_listbox: Listbox for genre selection.
     """
 
     root: Any
@@ -88,13 +105,16 @@ class Recommender:
         self.genre_listbox = None
 
     def extract_title(self, movie: Movie) -> str:
-        """Extract and return the title from the given movie.
+        """
+        Extract and return the title from the given movie as a string.
         """
         return movie.title
 
     def create_welcome_screen(self) -> None:
         """
-        Create the welcome screen for PickMeWatchMe.
+        Create and display the welcome screen for PickMeWatchMe.
+
+        This method sets up the initial screen with a welcome message and a start button.
         """
         self.welcome_frame.pack(fill=tk.BOTH, expand=True)
 
@@ -113,7 +133,8 @@ class Recommender:
 
     def show_actor_screen(self) -> None:
         """
-        Display the screen asking if the user has an actor/actress in mind.
+        Display the screen for actor/actress input.
+        This method shows a screen where users can enter an actor's name or skip to runtime/genre search.
         """
         # Hide other frames
         self.welcome_frame.pack_forget()
@@ -152,7 +173,8 @@ class Recommender:
 
     def handle_actor_search(self) -> None:
         """
-        Recommend movies based on the actor the user inputted.
+        Process the actor search and display movie recommendations.
+        This method retrieves movies featuring the entered actor and displays them in a new window.
         """
         actor_name = self.actor_entry.get()  # gets the inputted actor's name
         if actor_name:
@@ -171,7 +193,8 @@ class Recommender:
 
     def show_tree_recommendations(self) -> None:
         """
-        Show recommendations by using the tree.
+        Display the screen for runtime and genre preferences.
+        This method shows options for selecting movie runtime and genres for recommendations.
         """
         self.actor_frame.pack_forget()
         self.welcome_frame.pack_forget()
@@ -211,14 +234,6 @@ class Recommender:
                          "Music", "Musical", "Mystery", "Romance", "Sci-Fi", "Support",
                          "Thriller", "War", "Western"]
 
-        # self.genre_var = tk.StringVar(value=genre_options[0])
-        # genre_dropdown = tk.OptionMenu(genre_frame, self.genre_var, *genre_options)
-        # genre_dropdown.config(font=self.button_font, bg=self.colour_blue, fg="white",
-        #                        activebackground=self.colour_dark, activeforeground="white",
-        #                        highlightthickness=0)
-        # genre_dropdown["menu"].config(font=self.button_font, bg=self.colour_light, fg=self.colour_dark)
-        # genre_dropdown.pack(side=tk.LEFT)
-        #  listbox to allow multiple selections
         self.genre_listbox = tk.Listbox(genre_frame, selectmode="multiple",
                                         font=self.button_font, bg=self.colour_light,
                                         fg=self.colour_dark, height=10)
@@ -244,7 +259,10 @@ class Recommender:
 
     def process_preferences(self) -> None:
         """
-        Store the preferences into a tuple
+        Process user preferences and display movie recommendations.
+
+        This method takes the selected runtime and genres, processes them through a decision tree,
+        and displays the resulting movie recommendations.
         """
         length_map = {
             "0-60 minutes": "runtime_bin_very-short",
@@ -295,8 +313,9 @@ class Recommender:
 
     def show_movie_list(self, movies: list, title: str) -> None:
         """
-        Show the list of movie recommendations in a window.
-        Display only movie titles since the vertices are just movie titles. Helper to process_preferences.
+        Show the list of movie recommendations in a window. 
+        Displays the movies in the given list of movies, with the given title as the window title.
+        Helper to process_preferences.
         """
         # Create result window
         result_window = tk.Toplevel(self.root)
