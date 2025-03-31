@@ -19,7 +19,7 @@ import csv
 
 
 class MovieData:
-    """Data object representing movie data
+    """Data object representing a movie.
 
     Instance Attributes:
         - poster_title: a tuple contaning an address for the movie poster image and the movie title
@@ -33,7 +33,8 @@ class MovieData:
     cast_director: tuple[list[str], str]
     overview_rating: tuple[str, float]
 
-    def __init__(self, poster_title, genre_runtime, cast_director, overview_rating):
+    def __init__(self, poster_title: tuple[str, str], genre_runtime: tuple[str, int]
+                 , cast_director: tuple[list[str], str], overview_rating: tuple[str, float]):
         self.poster_title = poster_title
         self.genre_runtime = genre_runtime
         self.cast_director = cast_director

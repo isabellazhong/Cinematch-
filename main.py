@@ -19,7 +19,7 @@ This file is Copyright (c) 2025 Victoria Cai, Isabella Zhong, Maya Dowman, Grace
 """
 import tkinter as tk
 from tkinter import ttk
-from Recommender import Recommender
+from recommender import Recommender
 
 
 if __name__ == "__main__":
