@@ -16,6 +16,7 @@ expressly prohibited.
 This file is Copyright (c) 2025 Victoria Cai, Isabella Zhong, Maya Dowman, Grace-Keyi Wang
 """
 import csv
+from typing import Optional
 
 
 class MovieData:
@@ -28,13 +29,13 @@ class MovieData:
         - overview_rating: a tuple containing the movie overview and the movie rating
     """
 
-    poster_title: tuple[str, str]
-    genre_runtime: tuple[str, int]
-    cast_director: tuple[list[str], str]
-    overview_rating: tuple[str, float]
+    poster_title: Optional[tuple[str, str]]
+    genre_runtime: Optional[tuple[str, int]]
+    cast_director: Optional[tuple[list[str], str]]
+    overview_rating: Optional[tuple[list[str], float]]
 
-    def __init__(self, poster_title: tuple[str, str], genre_runtime: tuple[str, int]
-                 , cast_director: tuple[list[str], str], overview_rating: tuple[str, float]):
+    def __init__(self, poster_title: Optional[tuple], genre_runtime: Optional[tuple],
+                 cast_director: Optional[tuple], overview_rating: Optional[tuple]) -> None:
         self.poster_title = poster_title
         self.genre_runtime = genre_runtime
         self.cast_director = cast_director
@@ -56,9 +57,10 @@ class MovieData:
         class method to load in the basic information of the movie. Returns a dictionary mapping the movie title
         to the MovieData object of the specific movie.
 
+        >>> movies = MovieData()
         >>> movies = MovieData.load_movie_basics("imdb_top_1000.csv")
         >>> print(len(movies))
-        999
+        1000
 
         """
         movies = {}
@@ -83,7 +85,7 @@ if __name__ == '__main__':
     doctest.testmod(verbose='TRUE')
 
     python_ta.check_all(config={
-        'extra-imports': ['csv'],  # the names (strs) of imported modules
-        'allowed-io': [],     # the names (strs) of functions that call print/open/input
+        'extra-imports': ['csv', 'typing'],  # the names (strs) of imported modules
+        'allowed-io': ['MovieData.load_movie_basics'],     # the names (strs) of functions that call print/open/input
         'max-line-length': 120
     })
