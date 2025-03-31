@@ -24,6 +24,7 @@ expressly prohibited.
 This file is Copyright (c) 2025 Victoria Cai, Isabella Zhong, Maya Dowman, Grace-Keyi Wang
 """
 
+from __future__ import annotations
 from typing import Any
 import csv
 import pickle
@@ -32,29 +33,6 @@ from tkinter import ttk, messagebox
 import tkinter.font as tkfont
 from tree import MovieDecisionTree, BinaryCSV, Movie
 from movie_actor_graph import Graph, load_movie_actor_graph
-
-
-def get_rec(tree: MovieDecisionTree, _input: list) -> list:
-    """
-    return the recommended films by traversing the given tree
-    """
-    recommendations = tree.traverse_tree(_input)
-    return recommendations
-
-
-def build_decision_tree(file: str) -> MovieDecisionTree:
-    """
-    build the decision tree using the given file and returns a MovieDecisionTree object
-    """
-    tree = MovieDecisionTree('', [])
-    with open(file) as csv_file:
-        reader = csv.reader(csv_file)
-        next(reader)
-        for row in reader:
-            movie = pickle.loads(eval(row[0]))
-            movie_list = row[1:] + [movie]
-            tree.create_branch(movie_list)
-    return tree
 
 
 class Recommender:
@@ -113,27 +91,6 @@ class Recommender:
         """Extract and return the title from the given movie.
         """
         return movie.title
-
-    def convert_user_input(self, _input: set, file: str) -> list:
-        """
-        Encode the user input into a binary list so that it can traversre through the list.
-        """
-        with open(file) as csv_file:
-            reader = csv.reader(csv_file)
-            rows = list(reader)
-            header = rows[0]
-
-            encoded = []
-            # starts at one because header[0] is the movie node
-            header_index = 1
-            while header_index < len(header):
-                if header[header_index] in _input:
-                    encoded.append(1)
-                else:
-                    encoded.append(0)
-                header_index += 1
-
-            return encoded
 
     def create_welcome_screen(self) -> None:
         """
@@ -329,7 +286,7 @@ class Recommender:
         # call the encoding and tree traversal functions
         BinaryCSV('imdb_top_1000.csv', 'decision_tree.csv').create_decision_csv()
         decision_tree = build_decision_tree('decision_tree.csv')  # create decision tree
-        encoded = self.convert_user_input(encoded_input, 'decision_tree.csv')
+        encoded = convert_user_input(encoded_input, 'decision_tree.csv')
         recommended_movies = get_rec(decision_tree, encoded)  # get movie recommendations
         if recommended_movies == 'Not Found':
             messagebox.showinfo("No Recommendations", "No movie recommendations found for your preferences.")
@@ -339,7 +296,7 @@ class Recommender:
     def show_movie_list(self, movies: list, title: str) -> None:
         """
         Show the list of movie recommendations in a window.
-        Display only movie titles since the vertices are just movie titles.
+        Display only movie titles since the vertices are just movie titles. Helper to process_preferences.
         """
         # Create result window
         result_window = tk.Toplevel(self.root)
@@ -372,6 +329,52 @@ class Recommender:
         scrollbar = ttk.Scrollbar(result_window, orient="vertical", command=tree.yview)
         tree.configure(yscrollcommand=scrollbar.set)
         scrollbar.pack(side="right", fill="y")
+
+
+def convert_user_input(_input: set, file: str) -> list:
+    """
+    Encode the user input into a binary list so that it can traversre through the list.
+    Helper to process_preferences.
+    """
+    with open(file) as csv_file:
+        reader = csv.reader(csv_file)
+        rows = list(reader)
+        header = rows[0]
+
+        encoded = []
+        # starts at one because header[0] is the movie node
+        header_index = 1
+        while header_index < len(header):
+            if header[header_index] in _input:
+                encoded.append(1)
+            else:
+                encoded.append(0)
+            header_index += 1
+
+        return encoded
+
+
+def get_rec(tree: MovieDecisionTree, _input: list) -> list:
+    """
+    Return the recommended films by traversing the given tree. Helper to process_preferences.
+    """
+    recommendations = tree.traverse_tree(_input)
+    return recommendations
+
+
+def build_decision_tree(file: str) -> MovieDecisionTree:
+    """
+    Build the decision tree using the given file and returns a MovieDecisionTree object process_preferences.
+    """
+    tree = MovieDecisionTree('', [])
+    with open(file) as csv_file:
+        reader = csv.reader(csv_file)
+        next(reader)
+        for row in reader:
+            movie = pickle.loads(eval(row[0]))
+            movie_list = row[1:] + [movie]
+            tree.create_branch(movie_list)
+    return tree
 
 
 if __name__ == '__main__':
