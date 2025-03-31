@@ -13,10 +13,8 @@ csv
 __future__
 pickle
 typing
-base64
 pandas
 sklearn.tree
 sklearn.model_selection
-sklearn
 sklearn.preprocessing
 numpy
